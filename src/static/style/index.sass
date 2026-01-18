@@ -1,0 +1,306 @@
+@font-face
+    font-family: Outfit-Bold
+    src: url(../assets/other/Outfit-Bold.woff2) format(woff2)
+
+html, body
+    margin: 0
+    user-select: none
+    touch-action: none
+    background: rgb(0, 0, 0)
+    -webkit-tap-highlight-color: transparent
+
+    & ::backdrop
+        background: rgba(0, 0, 0, 0.5)
+
+main
+    gap: 10px
+    padding: 10px
+    display: flex
+    flex-direction: column
+    height: calc(100vh - 20px)
+
+    #lobby:open
+        border: none
+        width: 250px
+        padding: 10px
+        display: flex
+        user-select: none
+        border-radius: 5px
+        aspect-ratio: 1 / 1
+        align-items: stretch
+        flex-direction: column
+        justify-content: space-between
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5)
+
+        #room.jolt
+            will-change: transform
+            animation: jolt 1.5s linear
+            background: rgb(255, 102, 102)
+
+        #join
+            padding: 10px 0
+            border: 1px solid
+            text-align: center
+            border-radius: 5px
+            font-family: Outfit-Bold, sans-serif
+
+        .play
+            border: none
+            cursor: pointer
+            padding: 10.8px 0
+            border-radius: 5px
+            color: rgb(255, 255, 255)
+            background: rgb(23, 123, 84)
+            font-family: Outfit-Bold, sans-serif
+            box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
+
+        .play:focus
+            outline: none
+
+        span
+            display: flex
+            position: relative
+            align-items: center
+
+            #code
+                flex: 1
+                margin: 0
+                padding: 7.6px 0
+                border-radius: 5px
+                text-align: center
+                background: rgb(204, 204, 204)
+                font-family: Outfit-Bold, sans-serif
+
+            #send
+                top: 50%
+                right: 7.6px
+                cursor: pointer
+                position: absolute
+                transform: translateY(-50%)
+
+            hr
+                flex: 0.4
+
+            h6
+                margin: 0
+                font-family: Outfit-Bold, sans-serif
+
+    #panel
+        gap: 10px
+        display: none
+
+        button
+            flex: 1
+            padding: 0
+            height: 100%
+            border: none
+            display: none
+            cursor: pointer
+            border-radius: 5px
+            font-family: Outfit-Bold, sans-serif
+
+        #draw
+            h6
+                margin: 0
+                display: none
+                text-align: center
+                font-family: Outfit-Bold, sans-serif
+
+        #wipe
+            margin: 0
+            cursor: pointer
+
+        &[class]:not(.hand) #hand, &.hand #fall, &.decks #draw, &.decks.fra:not(.jolly) #draw > h6:nth-child(1), &.decks.fra.jolly #draw > h6:nth-child(2), &.cards #flip, &.dices #roll
+            display: block
+
+        &[class]
+            flex: 0.065
+            display: flex
+            align-items: center
+
+    #table
+        flex: 1
+        padding: 10px
+        overflow: auto
+        position: relative
+        border-radius: 5px
+        background: rgb(23, 123, 84)
+        border: 10px ridge rgb(239, 158, 87)
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5)
+
+        *
+            opacity: 1
+            position: absolute
+            visibility: visible
+            transition: opacity 1s linear, visibility 0s
+
+        .dragging
+            will-change: transform
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))
+
+        .selected
+            animation: glow 1.5s ease-in-out infinite alternate
+
+        &:has(> .selected)
+            cursor: pointer
+
+        .hide
+            opacity: 0
+            visibility: hidden
+            pointer-events: none
+            transition: opacity 1s linear, visibility 0s linear 1s
+
+        .hand
+            outline-offset: 3px
+            outline: 3px solid rgb(0, 255, 0)
+
+        .decks
+            top: 10px
+            height: 51.6px
+            padding-top: 4.5px
+
+            &.ita
+                width: 32.6px
+            &.fra
+                width: 35.6px
+
+                &.blue
+                    left: 47px
+                &.red
+                    left: 87px
+                &.jolly
+                    top: 70px
+
+                    .cards
+                        border: 1px solid rgb(204, 204, 204)
+
+            .cards
+                border: 1px solid
+                border-radius: 1.5px
+
+                &:nth-child(2)
+                    transform: translateY(-1.5px)
+                &:nth-child(3)
+                    transform: translateY(-3px)
+                &:nth-child(4)
+                    transform: translateY(-4.5px)
+
+        .chips
+            left: 127px
+
+            &.gold
+                top: 50px
+            &.blue
+                top: 90px
+            &.red
+                top: 130px
+            &.green
+                top: 170px
+
+        .dices
+            left: 127px
+            border-radius: 5px
+
+            &.black
+                top: 210px
+            &.red
+                top: 250px
+
+        .board
+            left: 167px
+
+        .chess
+            &.white
+                left: 447px
+            &.black
+                left: 487px
+            &.queen
+                top: 50px
+            &.bishop
+                top: 90px
+            &.knight
+                top: 130px
+            &.rook
+                top: 170px
+            &.pawn
+                top: 210px
+
+        .dames
+            top: 250px
+
+            &.white
+                left: 450px
+            &.black
+                left: 490px
+
+@media (hover: hover) and (pointer: fine)
+    #menu:open
+        .play:hover:not(.jolt)
+            border-radius: 90px
+            background: rgb(15, 80, 55)
+
+    #panel[class]
+        #hand:hover,
+        #fall:hover,
+        #draw:hover,
+        #flip:hover,
+        #roll:hover
+            border-radius: 90px
+            background: rgb(204, 204, 204)
+
+        #wipe:hover
+            animation: tada 1.5s ease-in-out
+
+@keyframes jolt
+    0%
+        transform: translateX(5px)
+    10%
+        transform: translateX(-5px)
+    20%
+        transform: translateX(5px)
+    30%
+        transform: translateX(-5px)
+    40%
+        transform: translateX(5px)
+    50%
+        transform: translateX(-5px)
+    60%
+        transform: translateX(5px)
+    70%
+        transform: translateX(-5px)
+    80%
+        transform: translateX(5px)
+    90%
+        transform: translateX(-5px)
+    100%
+        transform: translateX(0)
+
+@keyframes glow
+    from
+        filter: drop-shadow(0 0 0 rgb(255, 230, 120)) brightness(1)
+    to
+        filter: drop-shadow(0 0 5px rgb(255, 230, 120)) brightness(1.2)
+
+@keyframes tada
+    0%
+        transform: scale(1) rotate(0)
+    10%
+        transform: scale(0.97) rotate(-5deg)
+    20%
+        transform: scale(0.97) rotate(5deg)
+    30%
+        transform: scale(1) rotate(-5deg)
+    40%
+        transform: scale(1.03) rotate(5deg)
+    50%
+        transform: scale(1.03) rotate(-5deg)
+    60%
+        transform: scale(1.03) rotate(5deg)
+    70%
+        transform: scale(1) rotate(-5deg)
+    80%
+        transform: scale(0.97) rotate(5deg)
+    90%
+        transform: scale(0.97) rotate(-5deg)
+    100%
+        transform: scale(1) rotate(0)

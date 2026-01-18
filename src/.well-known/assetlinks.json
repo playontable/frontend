@@ -1,0 +1,16 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls",
+            "delegate_permission/common.get_login_creds"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.playontable.app",
+            "sha256_cert_fingerprints": [
+                "3D:04:4E:D6:CA:F5:E2:A0:08:27:18:CA:15:6E:03:D5:63:3F:35:D1:AF:25:E4:21:84:F0:8A:81:A2:AC:6F:D2",
+                "34:C3:98:92:19:11:32:10:76:73:53:C4:6E:15:9E:F3:66:ED:A9:35:74:D8:4F:D1:2F:FA:C9:0A:5D:15:FA:A4"
+            ]
+        }
+    }
+]
