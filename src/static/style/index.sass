@@ -58,7 +58,7 @@ main
         .play:focus
             outline: none
 
-        span
+        div
             display: flex
             position: relative
             align-items: center
@@ -84,8 +84,9 @@ main
             hr
                 flex: 0.4
 
-            h6
+            span
                 margin: 0
+                font-size: 13px
                 font-family: Outfit-Bold, sans-serif
 
     #panel
@@ -103,9 +104,10 @@ main
             font-family: Outfit-Bold, sans-serif
 
         #draw
-            h6
+            span
                 margin: 0
                 display: none
+                font-size: 9px
                 text-align: center
                 font-family: Outfit-Bold, sans-serif
 
@@ -113,7 +115,7 @@ main
             margin: 0
             cursor: pointer
 
-        &[class]:not(.hand) #hand, &.hand #fall, &.decks #draw, &.decks.fra:not(.jolly) #draw > h6:nth-child(1), &.decks.fra.jolly #draw > h6:nth-child(2), &.cards #flip, &.dices #roll
+        &[class]:not(.hand) #hand, &.hand #fall, &.decks #draw, &.decks.fra:not(.jolly) #draw > span:nth-child(1), &.decks.fra.jolly #draw > span:nth-child(2), &.cards #flip, &.dices #roll
             display: block
 
         &[class]
