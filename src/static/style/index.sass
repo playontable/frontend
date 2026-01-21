@@ -67,20 +67,33 @@ main
             #code
                 flex: 1
                 margin: 0
-                padding: 7.6px 0
                 border-radius: 5px
                 text-align: center
+                min-height: 38.4px
+                line-height: 38.4px
                 background: rgb(204, 204, 204)
                 font-family: Outfit-Bold, sans-serif
+
+                &.load
+                    color: transparent
+                    animation: load 2s linear infinite
+                    background: linear-gradient(90deg, rgba(204, 204, 204, 0.55) 0%, rgba(255, 255, 255, 0.85) 50%, rgba(204, 204, 204, 0.55) 100%) 0 0 / 200% 100%
+
+                &.show
+                    animation: show 200ms ease-out
 
             #send
                 top: 50%
                 margin: 0
                 padding: 0
                 right: 3.5px
+                display: none
                 cursor: pointer
                 position: absolute
                 transform: translateY(-50%)
+
+                &.show
+                    display: block
 
             hr
                 flex: 0.4
@@ -256,6 +269,20 @@ main
 
         #wipe:hover
             animation: tada 1.5s ease-in-out
+
+@keyframes load
+    from
+        background-position: 200% 0
+    to
+        background-position: -200% 0
+
+@keyframes show
+    from
+        transform: scale(0.98)
+        filter: brightness(1.05)
+    to
+        transform: scale(1)
+        filter: brightness(1)
 
 @keyframes jolt
     0%

@@ -41,7 +41,13 @@ socket.addEventListener("message", (({data: json}) => {
     const child = (index !== undefined && index !== null) ? table.children[index] : null;
     switch (hook) {
         case "code":
-            code.innerText = data
+            setTimeout(() => {
+                code.textContent = data;
+                code.classList.remove("load");
+                code.classList.add("show");
+                send.classList.add("show");
+                setTimeout(() => code.classList.remove("show"), 200);
+            }, 2000);
             break;
         case "fail":
             room.disabled = true;
