@@ -18,10 +18,10 @@ const config = {
     onDragEnd() {socket.send(JSON.stringify({hook: "drop", index: Array.from(table.children).indexOf(this.target)})); if (!this.target.classList.contains("copy")) socket.send(JSON.stringify({hook: "copy", data: {startX: this.startX, startY: this.startY}, index: Array.from(table.children).indexOf(this.target)}));}
 }
 
+lobby.showModal();
+
 gsap.registerPlugin(Draggable);
 Draggable.create("#table > *", config);
-
-lobby.showModal();
 table.addEventListener("click", (event) => {if (event.target === event.currentTarget) {panel.removeAttribute("class"); const child = getSelectedChild(); if (child) child.classList.remove("selected");}});
 
 send.addEventListener("click", () => {navigator.share({text: code.innerText});});

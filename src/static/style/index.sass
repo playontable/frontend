@@ -11,8 +11,16 @@ html, body
     background: rgb(0, 0, 0)
     -webkit-tap-highlight-color: transparent
 
-    & ::backdrop
+    ::backdrop
         background: rgba(0, 0, 0, 0.5)
+
+body
+    *
+        &:focus
+            outline: none
+        &:focus-visible
+            outline-offset: 3px
+            outline: 1px solid rgb(239, 158, 87)
 
 main
     gap: 10px
@@ -129,6 +137,7 @@ main
             font-size: 24px
             cursor: pointer
             background: none
+            border-radius: 5px
 
         &[class]:not(.hand) #hand, &.hand #fall, &.decks #draw, &.decks.fra:not(.jolly) #draw > span:nth-child(1), &.decks.fra.jolly #draw > span:nth-child(2), &.cards #flip, &.dices #roll
             display: block
