@@ -42,11 +42,6 @@ main
         justify-content: space-between
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5)
 
-        #room.jolt
-            will-change: transform
-            animation: jolt 1.5s linear
-            background: rgb(255, 102, 102)
-
         #join
             padding: 10px 0
             border: 1px solid
@@ -63,6 +58,12 @@ main
             background: rgb(23, 123, 84)
             font-family: Outfit-Bold, sans-serif
             box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
+
+        #room:disabled
+            cursor: not-allowed
+            will-change: transform
+            animation: jolt 1.5s linear
+            background: rgb(255, 102, 102)
 
         div
             display: flex
@@ -291,7 +292,7 @@ main
 
 @media (hover: hover) and (pointer: fine)
     #lobby:open
-        .play:hover:not(.jolt)
+        .play:not(:disabled):hover
             border-radius: 90px
             background: rgb(15, 80, 55)
 
