@@ -69,13 +69,13 @@ socket.addEventListener("message", (({data: json}) => {
             clone.classList.add("copy");
             table.append(clone);
             Draggable.create(clone, config);
-            gsap.to(child, {x: data.startX, y: data.startY, duration: 0});
+            gsap.set(child, {x: data.startX, y: data.startY});
             break;
         case "drop":
             child.classList.toggle("dragging");
             break;
         case "drag":
-            gsap.to(child, {x: data.x, y: data.y, zIndex: data.zIndex, duration: 0});
+            gsap.set(child, {x: data.x, y: data.y, zIndex: data.zIndex});
             break;
         case "hand":
         case "fall":
