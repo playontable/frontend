@@ -22,7 +22,7 @@ lobby.showModal();
 
 gsap.registerPlugin(Draggable);
 Draggable.create("#table > *", config);
-table.addEventListener("click", (event) => {if (event.target === event.currentTarget) {panel.removeAttribute("class"); const child = getSelectedChild(); if (child) child.classList.remove("selected");}});
+table.addEventListener("click", (event) => {if (event.target === event.currentTarget) {panel.removeAttribute("class"); getSelectedChild()?.classList?.remove("selected");}});
 
 send.addEventListener("click", () => {navigator.share({text: code.innerText});});
 room.addEventListener("click", () => {socket.send(JSON.stringify({hook: "room"}));});
