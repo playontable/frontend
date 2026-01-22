@@ -25,9 +25,9 @@ Draggable.create("#table > *", config);
 table?.addEventListener("click", (event) => {if (event.target === event.currentTarget) {panel?.removeAttribute("class"); getSelectedChild()?.classList?.remove("selected");}});
 
 send?.addEventListener("click", () => {navigator.share({text: code?.innerText});});
-room?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "play"}));});
+room?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "room"}));});
 join?.addEventListener("input", () => {if (join.value.length === 5) socket?.send(JSON.stringify({hook: "join", data: join.value}));});
-solo?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "play"}));});
+solo?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "solo"}));});
 hand?.addEventListener("click", () => {toggleHandAndSend();});
 fall?.addEventListener("click", () => {toggleHandAndSend();});
 draw?.addEventListener("click", () => {});
@@ -50,13 +50,10 @@ socket?.addEventListener("message", (({data: json}) => {
             }, 3000);
             break;
         case "code":
-            setTimeout(() => {
-                code.textContent = data;
-                code.className = send.className = "show";
-                setTimeout(() => code.className = "", 200);
-            }, 2000);
+            code.textContent = data;
             break;
-        case "play":
+        case "room":
+        case "solo":
             lobby.close();
             break;
         case "drag":

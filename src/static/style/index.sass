@@ -65,41 +65,44 @@ main
             animation: jolt 1.5s linear
             background: rgb(255, 102, 102)
 
-        div
-            display: flex
+        & > div:first-child
             position: relative
-            align-items: center
+            min-height: 38.4px
+            border-radius: 5px
+            line-height: 38.4px
+            animation: load 2s linear infinite
+            background: linear-gradient(90deg, rgba(204, 204, 204, 0.55) 0%, rgba(255, 255, 255, 0.85) 50%, rgba(204, 204, 204, 0.55) 100%) 0 0 / 200% 100%
 
             #code
-                flex: 1
                 margin: 0
-                border-radius: 5px
+                width: 100%
+                display: block
+                visibility: hidden
                 text-align: center
-                min-height: 38.4px
-                line-height: 38.4px
-                background: rgb(204, 204, 204)
+                color: rgb(0, 0, 0)
                 font-family: Outfit-Bold, sans-serif
-
-                &.load
-                    color: transparent
-                    animation: load 2s linear infinite
-                    background: linear-gradient(90deg, rgba(204, 204, 204, 0.55) 0%, rgba(255, 255, 255, 0.85) 50%, rgba(204, 204, 204, 0.55) 100%) 0 0 / 200% 100%
-
-                &.show
-                    animation: show 200ms ease-out
 
             #send
                 top: 50%
                 margin: 0
                 padding: 0
                 right: 3.5px
-                display: none
+                display: block
                 cursor: pointer
+                visibility: hidden
                 position: absolute
                 transform: translateY(-50%)
 
-                &.show
-                    display: block
+            &:has(#code:not(:empty))
+                animation: load 2s linear, zoom 0.2s ease-out 2s both
+
+            &:has(#code:not(:empty)) #code, &:has(#code:not(:empty)) #send
+                animation: show 0.2s ease-out 2s both
+
+        .else
+            display: flex
+            position: relative
+            align-items: center
 
             hr
                 flex: 0.4
@@ -297,19 +300,14 @@ main
             background: rgb(15, 80, 55)
 
     #panel[class]
-        #hand:hover,
-        #fall:hover,
-        #draw:hover,
-        #flip:hover,
-        #roll:hover
+        #hand:hover, #fall:hover, #draw:hover, #flip:hover, #roll:hover
             border-radius: 90px
             background: rgb(204, 204, 204)
         #wipe:hover
             animation: tada 1.5s ease-in-out
 
     #allow:open
-        #okay:hover,
-        #back:hover
+        #okay:hover, #back:hover
             border-radius: 90px
         #okay:hover
             background: rgb(204, 51, 51)
@@ -322,13 +320,20 @@ main
     to
         background-position: -200% 0
 
-@keyframes show
+@keyframes zoom
     from
         transform: scale(0.98)
         filter: brightness(1.05)
     to
         transform: scale(1)
         filter: brightness(1)
+        background: rgb(204, 204, 204)
+
+@keyframes show
+    from
+        visibility: hidden
+    to
+        visibility: visible
 
 @keyframes jolt
     0%
