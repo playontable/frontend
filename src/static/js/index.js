@@ -32,7 +32,7 @@ hand.addEventListener("click", () => {toggleHandAndSend("hand");});
 fall.addEventListener("click", () => {toggleHandAndSend("fall");});
 draw.addEventListener("click", () => {});
 flip.addEventListener("click", () => {});
-roll.addEventListener("click", () => {const rollAnimation = setInterval(() => {socket.send(JSON.stringify({hook: "roll", data: Math.floor(Math.random() * 6) + 1, index: Array.from(table.children).indexOf(getSelectedChild())}));}, 100); setTimeout(() => {clearInterval(rollAnimation);}, 1000);});
+roll.addEventListener("click", () => {socket.send(JSON.stringify({hook: "roll", data: gsap.utils.shuffle([1, 2, 3, 4, 5, 6]), index: Array.from(table.children).indexOf(getSelectedChild())}));});
 wipe.addEventListener("click", () => {allow.showModal();});
 okay.addEventListener("click", () => {socket.send(JSON.stringify({hook: "wipe", index: Array.from(table.children).indexOf(getSelectedChild())}));});
 back.addEventListener("click", () => {allow.close();});
@@ -87,7 +87,7 @@ socket.addEventListener("message", (({data: json}) => {
         case "flip":
             break;
         case "roll":
-            child.setAttribute("src", `static/assets/table/dices/${child.classList[0]}/${data}.webp`);
+            gsap.set(child, {repeat: 7, ease: "none", repeatDelay: 2, onRepeat: function () {child.setAttribute("src", `static/assets/table/dices/${child.classList[0]}/${data[this.iteration() - 2]}.webp`);}});
             break;
         case "wipe":
             allow.close();
