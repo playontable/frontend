@@ -22,7 +22,6 @@ gsap.registerPlugin(Draggable);
 Draggable.create("#table > *", config);
 
 lobby.showModal();
-lobby.addEventListener("keydown", (event) => {if (event.key === "Escape") event.preventDefault();});
 table.addEventListener("click", (event) => {if (event.target === event.currentTarget) {panel.removeAttribute("class"); const child = getSelectedChild(); if (child) child.classList.remove("selected");}});
 
 send.addEventListener("click", () => {navigator.share({text: code.innerText});});
