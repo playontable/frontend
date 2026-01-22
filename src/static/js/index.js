@@ -34,7 +34,7 @@ draw.addEventListener("click", () => {});
 flip.addEventListener("click", () => {});
 roll.addEventListener("click", () => {const rollAnimation = setInterval(() => {socket.send(JSON.stringify({hook: "roll", data: Math.floor(Math.random() * 6) + 1, index: Array.from(table.children).indexOf(getSelectedChild())}));}, 100); setTimeout(() => {clearInterval(rollAnimation);}, 1000);});
 wipe.addEventListener("click", () => {allow.showModal();});
-okay.addEventListener("click", () => {allow.close(); socket.send(JSON.stringify({hook: "wipe", index: Array.from(table.children).indexOf(getSelectedChild())}));});
+okay.addEventListener("click", () => {socket.send(JSON.stringify({hook: "wipe", index: Array.from(table.children).indexOf(getSelectedChild())}));});
 back.addEventListener("click", () => {allow.close();});
 
 socket.addEventListener("message", (({data: json}) => {
@@ -90,6 +90,7 @@ socket.addEventListener("message", (({data: json}) => {
             child.setAttribute("src", `static/assets/table/dices/${child.classList[0]}/${data}.webp`);
             break;
         case "wipe":
+            allow.close();
             child.remove();
             panel.removeAttribute("class");
             break;
