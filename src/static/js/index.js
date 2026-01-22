@@ -26,7 +26,7 @@ table?.addEventListener("click", (event) => {if (event.target === event.currentT
 
 send?.addEventListener("click", () => {navigator.share({text: code?.innerText});});
 room?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "play"}));});
-join.addEventListener("input", () => {if (join.value.length === 5) socket?.send(JSON.stringify({hook: "join", data: join.value}));});
+join?.addEventListener("input", () => {if (join.value.length === 5) socket?.send(JSON.stringify({hook: "join", data: join.value}));});
 solo?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "play"}));});
 hand?.addEventListener("click", () => {toggleHandAndSend();});
 fall?.addEventListener("click", () => {toggleHandAndSend();});
