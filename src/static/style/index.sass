@@ -107,7 +107,7 @@ main
         gap: 10px
         display: none
 
-        button
+        button:not(#wipe)
             flex: 1
             padding: 0
             height: 100%
@@ -116,6 +116,7 @@ main
             cursor: pointer
             border-radius: 5px
             font-family: Outfit-Bold, sans-serif
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5)
 
         #draw
             span
@@ -126,15 +127,18 @@ main
                 font-family: Outfit-Bold, sans-serif
 
         #wipe
-            margin: 0
+            padding: 0
+            border: none
+            font-size: 24px
             cursor: pointer
+            background: none
 
         &[class]:not(.hand) #hand, &.hand #fall, &.decks #draw, &.decks.fra:not(.jolly) #draw > span:nth-child(1), &.decks.fra.jolly #draw > span:nth-child(2), &.cards #flip, &.dices #roll
             display: block
 
         &[class]
-            flex: 0.065
             display: flex
+            height: 38.4px 
             align-items: center
 
     #table
@@ -252,8 +256,35 @@ main
             &.black
                 left: 490px
 
+    #allow:open
+        gap: 10px
+        border: none
+        width: 250px
+        padding: 10px
+        display: flex
+        user-select: none
+        border-radius: 5px
+        align-items: stretch
+        flex-direction: column
+        justify-content: space-between
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5)
+
+        #okay, #back
+            border: none
+            cursor: pointer
+            padding: 10.8px 0
+            border-radius: 5px
+            font-family: Outfit-Bold, sans-serif
+            box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
+
+        #okay
+            color: rgb(255, 255, 255)
+            background: rgb(255, 102, 102)
+        #back
+            background: rgb(255, 255, 255)
+
 @media (hover: hover) and (pointer: fine)
-    #menu:open
+    #lobby:open
         .play:hover:not(.jolt)
             border-radius: 90px
             background: rgb(15, 80, 55)
@@ -269,6 +300,15 @@ main
 
         #wipe:hover
             animation: tada 1.5s ease-in-out
+
+    #allow:open
+        #okay:hover,
+        #back:hover
+            border-radius: 90px
+        #okay:hover
+            background: rgb(204, 51, 51)
+        #back:hover
+            background: rgb(204, 204, 204)
 
 @keyframes load
     from

@@ -2,7 +2,7 @@ import {gsap} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/+esm";
 import {Draggable} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/Draggable.min.js";
 
 const socket = new WebSocket("wss://api.playontable.com/websocket/");
-const {lobby, table, panel, code, send, room, join, solo, hand, fall, draw, flip, roll, wipe} = Object.fromEntries(["lobby", "table", "panel", "code", "send", "room", "join", "solo", "hand", "fall", "draw", "flip", "roll", "wipe"].map(id => [id, document.getElementById(id)]));
+const {lobby, table, panel, allow, code, send, room, join, solo, hand, fall, draw, flip, roll, wipe, okay, back} = Object.fromEntries(["lobby", "table", "panel", "allow", "code", "send", "room", "join", "solo", "hand", "fall", "draw", "flip", "roll", "wipe", "okay", "back"].map(id => [id, document.getElementById(id)]));
 const getSelectedChild = () => table.querySelector("#table > .selected");
 const toggleHandAndSend = (hook) => {
     const child = getSelectedChild();
@@ -25,16 +25,18 @@ lobby.showModal();
 lobby.addEventListener("keydown", (event) => {if (event.key === "Escape") event.preventDefault();});
 table.addEventListener("click", (event) => {if (event.target === event.currentTarget) {panel.removeAttribute("class"); const child = getSelectedChild(); if (child) child.classList.remove("selected");}});
 
-send.addEventListener("click", () => navigator.share({text: code.innerText}));
-room.addEventListener("click", () => socket.send(JSON.stringify({hook: "room"})));
+send.addEventListener("click", () => {navigator.share({text: code.innerText});});
+room.addEventListener("click", () => {socket.send(JSON.stringify({hook: "room"}));});
 join.addEventListener("input", () => {if (join.value.length === 5) socket.send(JSON.stringify({hook: "join", data: join.value}));});
-solo.addEventListener("click", () => socket.send(JSON.stringify({hook: "solo"})));
-hand.addEventListener("click", () => toggleHandAndSend("hand"));
-fall.addEventListener("click", () => toggleHandAndSend("fall"));
+solo.addEventListener("click", () => {socket.send(JSON.stringify({hook: "solo"}));});
+hand.addEventListener("click", () => {toggleHandAndSend("hand");});
+fall.addEventListener("click", () => {toggleHandAndSend("fall");});
 draw.addEventListener("click", () => {});
 flip.addEventListener("click", () => {});
 roll.addEventListener("click", () => {const rollAnimation = setInterval(() => {socket.send(JSON.stringify({hook: "roll", data: Math.floor(Math.random() * 6) + 1, index: Array.from(table.children).indexOf(getSelectedChild())}));}, 100); setTimeout(() => {clearInterval(rollAnimation);}, 1000);});
-wipe.addEventListener("click", () => socket.send(JSON.stringify({hook: "wipe", index: Array.from(table.children).indexOf(getSelectedChild())})));
+wipe.addEventListener("click", () => {allow.showModal();});
+okay.addEventListener("click", () => {socket.send(JSON.stringify({hook: "wipe", index: Array.from(table.children).indexOf(getSelectedChild())})); allow.close();});
+back.addEventListener("click", () => {allow.close();});
 
 socket.addEventListener("message", (({data: json}) => {
     const {hook, data, index} = JSON.parse(json);
