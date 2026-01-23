@@ -109,45 +109,6 @@ main
                 font-size: 13px
                 font-family: Outfit-Bold, sans-serif
 
-    #panel
-        gap: 10px
-        display: none
-
-        button:not(#wipe)
-            flex: 1
-            padding: 0
-            height: 100%
-            border: none
-            display: none
-            cursor: pointer
-            border-radius: 5px
-            font-family: Outfit-Bold, sans-serif
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5)
-
-        #draw
-            span
-                margin: 0
-                display: none
-                font-size: 9px
-                text-align: center
-                font-family: Outfit-Bold, sans-serif
-
-        #wipe
-            padding: 0
-            border: none
-            font-size: 24px
-            cursor: pointer
-            background: none
-            border-radius: 5px
-
-        &[class]:not(.hand) #hand, &.hand #fall, &.decks #draw, &.decks.fra:not(.jolly) #draw > span:nth-child(1), &.decks.fra.jolly #draw > span:nth-child(2), &.cards #flip, &.dices #roll
-            display: block
-
-        &[class]
-            display: flex
-            height: 38.4px 
-            align-items: center
-
     #table
         flex: 1
         padding: 10px
@@ -265,6 +226,45 @@ main
                 left: 450px
             &.black
                 left: 490px
+
+    #panel
+        gap: 10px
+        display: none
+
+        button:not(#wipe)
+            flex: 1
+            padding: 0
+            height: 100%
+            border: none
+            display: none
+            cursor: pointer
+            border-radius: 5px
+            font-family: Outfit-Bold, sans-serif
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5)
+
+        #draw
+            span
+                margin: 0
+                display: none
+                font-size: 9px
+                text-align: center
+                font-family: Outfit-Bold, sans-serif
+
+        #wipe
+            padding: 0
+            border: none
+            font-size: 24px
+            cursor: pointer
+            background: none
+            border-radius: 5px
+
+        &[class]:not(.hand) #hand, &.hand #fall, &.decks #draw, &.decks.fra:not(.jolly) #draw > span:nth-child(1), &.decks.fra.jolly #draw > span:nth-child(2), &.cards #flip, &.dices #roll
+            display: block
+
+        &[class]
+            display: flex
+            height: 38.4px 
+            align-items: center
 
     #allow:open
         gap: 10px
