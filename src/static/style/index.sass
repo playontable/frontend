@@ -101,7 +101,6 @@ main
 
             &:has(#code:not(:empty))::before
                 opacity: 0
-
             &:has(#code:not(:empty))
                 will-change: transform, filter
                 animation: zoom 0.2s ease-out 2s
@@ -343,8 +342,6 @@ main
         filter: brightness(1)
 
 @keyframes show
-    from
-        visibility: hidden
     to
         visibility: visible
 
