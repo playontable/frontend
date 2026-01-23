@@ -90,6 +90,7 @@ main
                 transform: translateY(-50%)
 
             &:has(#code:not(:empty))
+                will-change: transform, filter
                 animation: load 2s linear, zoom 0.2s ease-out 2s, fade 0.2s ease-out 2s forwards
 
             &:has(#code:not(:empty)) #code, &:has(#code:not(:empty)) #send
@@ -165,10 +166,11 @@ main
             transition: opacity 1s linear, visibility 0s
 
         .dragging
-            will-change: transform
+            will-change: transform, filter
             filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))
 
         .selected
+            will-change: filter
             animation: glow 1.5s ease-in-out infinite alternate
 
         &:has(> .selected)
@@ -178,6 +180,7 @@ main
             opacity: 0
             visibility: hidden
             pointer-events: none
+            will-change: opacity
             transition: opacity 1s linear, visibility 0s linear 1s
 
         .hand
@@ -301,6 +304,7 @@ main
             border-radius: 90px
             background: rgb(204, 204, 204)
         #wipe:hover
+            will-change: transform
             animation: tada 1.5s ease-in-out
 
     #allow:open
