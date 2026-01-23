@@ -56,7 +56,7 @@ main
             box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
 
         #room:disabled
-            cursor: not-allowed
+            pointer-events: none
             will-change: transform
             animation: jolt 1.5s linear
             background: rgb(255, 102, 102)
@@ -66,8 +66,18 @@ main
             min-height: 38.4px
             border-radius: 5px
             line-height: 38.4px
-            animation: load linear infinite
-            background: linear-gradient(90deg, rgba(204, 204, 204, 0.55) 0%, rgba(255, 255, 255, 0.85) 50%, rgba(204, 204, 204, 0.55) 100%) 0 0 / 200% 100%
+            background: rgb(204, 204, 204)
+
+            &::before
+                inset: 0
+                opacity: 1
+                content: ""
+                position: absolute
+                border-radius: 5px
+                pointer-events: none
+                animation: load 2s linear infinite
+                transition: opacity 0.2s ease-out 2s
+                background: linear-gradient(90deg, rgba(204, 204, 204, 0.55) 0%, rgba(255, 255, 255, 0.85) 50%, rgba(204, 204, 204, 0.55) 100%) 0 0 / 200% 100%
 
             #code
                 margin: 0
@@ -89,9 +99,12 @@ main
                 position: absolute
                 transform: translateY(-50%)
 
+            &:has(#code:not(:empty))::before
+                opacity: 0
+
             &:has(#code:not(:empty))
                 will-change: transform, filter
-                animation: load 2s linear, zoom 0.2s ease-out 2s, fade 0.2s ease-out 2s forwards
+                animation: zoom 0.2s ease-out 2s
 
             &:has(#code:not(:empty)) #code, &:has(#code:not(:empty)) #send
                 animation: show 0.2s ease-out 2s both
@@ -328,10 +341,6 @@ main
     to
         transform: scale(1)
         filter: brightness(1)
-
-@keyframes fade
-    to
-        background: rgb(204, 204, 204)
 
 @keyframes show
     from
