@@ -105,7 +105,7 @@ socket?.addEventListener("message", (({data: json}) => {
         case "flip":
             break;
         case "roll":
-            gsap.set(child, {repeat: 7, ease: "none", repeatDelay: 1, onRepeat: function () {child.setAttribute("src", `static/assets/table/dices/${child.classList[0]}/${data[this.iteration() - 2]}.webp`);}});
+            gsap.set(child, {repeat: 7, ease: "none", repeatDelay: 0.250, onRepeat: function () {child.setAttribute("src", `static/assets/table/dices/${child.classList[0]}/${data[this.iteration() - 2]}.webp`);}});
             break;
         case "wipe":
             allow.close();
