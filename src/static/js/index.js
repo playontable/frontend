@@ -42,12 +42,40 @@ socket?.addEventListener("message", (({data: json}) => {
     const child = (index !== undefined && index !== null) ? table.children[index] : null;
     switch (hook) {
         case "fail":
-            room.toggleAttribute("disabled");
-            room.textContent = "ONLY YOU !";
-            setTimeout(() => {
-                room.toggleAttribute("disabled");
-                room.textContent = "START ROOM";
-            }, 3000);
+            switch (data) {
+                case "only":
+                    room.textContent = "ONLY YOU !";
+                    room.toggleAttribute("disabled");
+                    setTimeout(() => {
+                        room.textContent = "START ROOM";
+                        room.toggleAttribute("disabled");
+                    }, 3000);
+                    break;
+                case "room":
+                    join.value = "ROOM IS NON-EXISTENT !";
+                    join.toggleAttribute("disabled");
+                    setTimeout(() => {
+                        join.value = "";
+                        join.toggleAttribute("disabled");
+                    }, 3000);
+                    break;
+                case "same":
+                    join.value = "ROOM CODE IS INVALID !";
+                    join.toggleAttribute("disabled");
+                    setTimeout(() => {
+                        join.value = "";
+                        join.toggleAttribute("disabled");
+                    }, 3000);
+                    break;
+                case "join":
+                    join.value = "ROOM ALREADY STARTED !";
+                    join.toggleAttribute("disabled");
+                    setTimeout(() => {
+                        join.value = "";
+                        join.toggleAttribute("disabled");
+                    }, 3000);
+                    break;
+            }
             break;
         case "code":
             code.textContent = data;
