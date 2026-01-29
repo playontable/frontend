@@ -59,20 +59,20 @@ socket?.addEventListener("message", (({data: json}) => {
                         join.toggleAttribute("disabled");
                     }, 3000);
                     break;
-                case "only":
-                    room.textContent = "ONLY YOU !";
-                    room.toggleAttribute("disabled");
-                    setTimeout(() => {
-                        room.textContent = "START ROOM";
-                        room.toggleAttribute("disabled");
-                    }, 3000);
-                    break;
                 case "play":
                     join.value = "ROOM ALREADY STARTED !";
                     join.toggleAttribute("disabled");
                     setTimeout(() => {
                         join.value = "";
                         join.toggleAttribute("disabled");
+                    }, 3000);
+                    break;
+                case "void":
+                    room.textContent = "ONLY YOU !";
+                    room.toggleAttribute("disabled");
+                    setTimeout(() => {
+                        room.textContent = "START ROOM";
+                        room.toggleAttribute("disabled");
                     }, 3000);
                     break;
             }
