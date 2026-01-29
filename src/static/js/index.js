@@ -43,6 +43,22 @@ socket?.addEventListener("message", (({data: json}) => {
     switch (hook) {
         case "fail":
             switch (data) {
+                case "none":
+                    join.value = "ROOM IS NON-EXISTENT !";
+                    join.toggleAttribute("disabled");
+                    setTimeout(() => {
+                        join.value = "";
+                        join.toggleAttribute("disabled");
+                    }, 3000);
+                    break;
+                case "host":
+                    join.value = "ROOM CODE IS INVALID !";
+                    join.toggleAttribute("disabled");
+                    setTimeout(() => {
+                        join.value = "";
+                        join.toggleAttribute("disabled");
+                    }, 3000);
+                    break;
                 case "only":
                     room.textContent = "ONLY YOU !";
                     room.toggleAttribute("disabled");
@@ -51,23 +67,7 @@ socket?.addEventListener("message", (({data: json}) => {
                         room.toggleAttribute("disabled");
                     }, 3000);
                     break;
-                case "room":
-                    join.value = "ROOM IS NON-EXISTENT !";
-                    join.toggleAttribute("disabled");
-                    setTimeout(() => {
-                        join.value = "";
-                        join.toggleAttribute("disabled");
-                    }, 3000);
-                    break;
-                case "same":
-                    join.value = "ROOM CODE IS INVALID !";
-                    join.toggleAttribute("disabled");
-                    setTimeout(() => {
-                        join.value = "";
-                        join.toggleAttribute("disabled");
-                    }, 3000);
-                    break;
-                case "join":
+                case "play":
                     join.value = "ROOM ALREADY STARTED !";
                     join.toggleAttribute("disabled");
                     setTimeout(() => {
@@ -80,8 +80,7 @@ socket?.addEventListener("message", (({data: json}) => {
         case "code":
             code.textContent = data;
             break;
-        case "room":
-        case "solo":
+        case "play":
             lobby.close();
             break;
         case "drag":
