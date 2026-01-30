@@ -51,14 +51,6 @@ socket?.addEventListener("message", (({data: json}) => {
                         join.toggleAttribute("disabled");
                     }, 3000);
                     break;
-                case "host":
-                    join.value = "ROOM CODE IS INVALID !";
-                    join.toggleAttribute("disabled");
-                    setTimeout(() => {
-                        join.value = "";
-                        join.toggleAttribute("disabled");
-                    }, 3000);
-                    break;
                 case "play":
                     join.value = "ROOM ALREADY STARTED !";
                     join.toggleAttribute("disabled");
