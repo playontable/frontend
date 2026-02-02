@@ -25,52 +25,64 @@ main
     flex-direction: column
     height: calc(100dvh - 20px)
 
-    #lobby:open
+    .lobby:open
         border: none
-        width: 250px
         padding: 10px
-        display: flex
         user-select: none
         border-radius: 5px
-        aspect-ratio: 1 / 1
-        align-items: stretch
-        flex-direction: column
-        justify-content: space-between
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5)
 
-        #join
-            padding: 10px 0
-            border: 1px solid
-            text-align: center
-            border-radius: 5px
-            text-transform: uppercase
-            font-family: Outfit-Bold, sans-serif
-
-            &::placeholder
-                text-transform: none
-
-        .play
+        button
+            height: 40px
             border: none
             cursor: pointer
-            padding: 10.8px 0
+            padding: 10px 0
             border-radius: 5px
             color: rgb(255, 255, 255)
             background: rgb(23, 123, 84)
             font-family: Outfit-Bold, sans-serif
             box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
 
-        #room:disabled, #join:disabled
+        button:disabled
             pointer-events: none
             will-change: transform
             color: rgb(255, 255, 255)
             animation: jolt 1.5s linear
             background: rgb(255, 102, 102)
 
-        div:first-child
+    .lobby#entry:open
+        form
+            gap: 10px
+            width: 200px
+            height: 200px
+            display: flex
+            flex-direction: column
+
+            .else
+                height: 20px
+                display: flex
+                align-items: center
+
+                hr
+                    flex: 0.4
+
+                span
+                    margin: 0
+                    font-size: 10px
+                    font-family: Outfit-Bold, sans-serif
+
+    .lobby#start:open, .lobby#enter:open
+        gap: 10px
+        width: 200px
+        display: flex
+        flex-direction: column
+
+    .lobby#start:open
+        div
+            min-height: 40px
+            line-height: 40px
             position: relative
-            min-height: 38.4px
             border-radius: 5px
-            line-height: 38.4px
             background: rgb(204, 204, 204)
 
             &::before
@@ -113,18 +125,17 @@ main
             &:has(#code:not(:empty)) #code, &:has(#code:not(:empty)) #send
                 animation: show 0.2s ease-out 2s both
 
-        .else
-            display: flex
-            position: relative
-            align-items: center
+    .lobby#enter:open
+        #e
+            padding: 10px 0
+            border: 1px solid
+            text-align: center
+            border-radius: 5px
+            text-transform: uppercase
+            font-family: Outfit-Bold, sans-serif
 
-            hr
-                flex: 0.4
-
-            span
-                margin: 0
-                font-size: 13px
-                font-family: Outfit-Bold, sans-serif
+            &::placeholder
+                text-transform: none
 
     #table
         flex: 1

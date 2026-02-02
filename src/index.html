@@ -20,13 +20,22 @@
 </head>
     <body oncontextmenu = "return false">
         <main>
-            <dialog id = "lobby">
+            <dialog id = "entry" class = "lobby">
+                <form method = "dialog">
+                    <button value = "start room">START ROOM</button>
+                    <div class = "else"><hr><span>OR</span><hr></div>
+                    <button value = "enter room">ENTER ROOM</button>
+                    <div class = "else"><hr><span>OR</span><hr></div>
+                    <button>START SOLO</button>
+                </form>
+            </dialog>
+            <dialog id = "start" class = "lobby">
                 <div><h3 id = "code"></h3><h2 id = "send">↗️</h2></div>
-                <button id = "room" class = "play" autofocus>START ROOM</button>
-                <div class = "else"><hr><span>OR</span><hr></div>
-                <input id = "join" type = "text" placeholder = "Enter Room Code Here...">
-                <div class = "else"><hr><span>OR</span><hr></div>
-                <button id = "solo" class = "play">START SOLO</button>
+                <button id = "play">START ROOM</button>
+            </dialog>
+            <dialog id = "enter" class = "lobby">
+                <input id = "room" type = "text" placeholder = "Write Room Code..." pattern = "^[A-Z0-9]{5}$">
+                <button id = "join">ENTER ROOM</button>
             </dialog>
             <div id = "table">
                 <div class = "ita decks">

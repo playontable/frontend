@@ -1,8 +1,48 @@
 import {gsap} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/+esm";
 import {Draggable} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/Draggable.min.js";
 
-const socket = new WebSocket("wss://api.playontable.com/websocket/");
-const {lobby, table, panel, allow, code, send, room, join, solo, hand, fall, draw, flip, roll, wipe, okay, back} = Object.fromEntries(["lobby", "table", "panel", "allow", "code", "send", "room", "join", "solo", "hand", "fall", "draw", "flip", "roll", "wipe", "okay", "back"].map(id => [id, document.getElementById(id)]));
+const {
+    entry,
+    start,
+    enter,
+    table,
+    panel,
+    allow,
+    code,
+    send,
+    play,
+    room,
+    join,
+    hand,
+    fall,
+    draw,
+    flip,
+    roll,
+    wipe,
+    okay,
+    back
+} = Object.fromEntries([
+    "entry",
+    "start",
+    "enter",
+    "table",
+    "panel",
+    "allow",
+    "code",
+    "send",
+    "play",
+    "room",
+    "join",
+    "hand",
+    "fall",
+    "draw",
+    "flip",
+    "roll",
+    "wipe",
+    "okay",
+    "back"
+].map(id => [id, document.getElementById(id)]));
+
 const getSelectedChild = () => table.querySelector("#table > .selected");
 const toggleHandAndSend = () => {
     const child = getSelectedChild();
@@ -18,16 +58,23 @@ const config = {
     onDragEnd() {socket.send(JSON.stringify({hook: "step", index: Array.from(table.children).indexOf(this.target)})); if (!this.target.classList.contains("copy")) socket.send(JSON.stringify({hook: "copy", data: {x: this.startX, y: this.startY}, index: Array.from(table.children).indexOf(this.target)}));}
 }
 
-lobby?.showModal();
+entry?.showModal();
+entry?.addEventListener("close", () => {
+    switch (entry.returnValue) {
+        case "start room":
+            start.showModal();
+            socket.send(JSON.stringify({hook: "make"}));
+            break;
+        case "enter room":
+            enter.showModal();
+            break;
+    }
+});
 
-gsap.registerPlugin(Draggable);
-Draggable.create("#table > *", config);
-table?.addEventListener("click", (event) => {if (event.target === event.currentTarget) {panel?.removeAttribute("class"); getSelectedChild()?.classList?.remove("selected");}});
+play?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "play"}));});
+join?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "join", data: room?.value.toUpperCase()}));});
 
 send?.addEventListener("click", () => {navigator.share({text: code?.innerText});});
-room?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "play"}));});
-join?.addEventListener("input", () => {if (join.value.length === 5) socket?.send(JSON.stringify({hook: "join", data: join.value}));});
-solo?.addEventListener("click", () => {lobby.close();});
 hand?.addEventListener("click", () => {toggleHandAndSend();});
 fall?.addEventListener("click", () => {toggleHandAndSend();});
 draw?.addEventListener("click", () => {});
@@ -37,6 +84,7 @@ wipe?.addEventListener("click", () => {allow?.showModal();});
 okay?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "wipe", index: Array.from(table?.children).indexOf(getSelectedChild())}));});
 back?.addEventListener("click", () => {allow?.close();});
 
+const socket = new WebSocket("wss://api.playontable.com/websocket/");
 socket?.addEventListener("message", (({data: json}) => {
     const {hook, data, index} = JSON.parse(json);
     const child = (index !== undefined && index !== null) ? table.children[index] : null;
@@ -44,18 +92,18 @@ socket?.addEventListener("message", (({data: json}) => {
         case "fail":
             switch (data) {
                 case "none":
-                    join.value = "ROOM IS NON-EXISTENT !";
+                    join.textContent = "ROOM IS NON-EXISTENT !";
                     join.toggleAttribute("disabled");
                     setTimeout(() => {
-                        join.value = "";
+                        join.textContent = "ENTER ROOM";
                         join.toggleAttribute("disabled");
                     }, 3000);
                     break;
                 case "play":
-                    join.value = "ROOM ALREADY STARTED !";
+                    join.textContent = "ROOM ALREADY STARTED !";
                     join.toggleAttribute("disabled");
                     setTimeout(() => {
-                        join.value = "";
+                        join.textContent = "ENTER ROOM";
                         join.toggleAttribute("disabled");
                     }, 3000);
                     break;
@@ -73,8 +121,10 @@ socket?.addEventListener("message", (({data: json}) => {
             code.textContent = data;
             break;
         case "play":
-            lobby.close();
+            start.close();
             break;
+        case "join":
+
         case "drag":
             gsap.set(child, data);
             break;
@@ -105,3 +155,7 @@ socket?.addEventListener("message", (({data: json}) => {
             break;
     }
 }));
+
+gsap.registerPlugin(Draggable);
+Draggable.create("#table > *", config);
+table?.addEventListener("click", (event) => {if (event.target === event.currentTarget) {panel?.removeAttribute("class"); getSelectedChild()?.classList?.remove("selected");}});
