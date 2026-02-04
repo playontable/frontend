@@ -32,23 +32,17 @@
             <dialog id = "start" class = "lobby">
                 <form method = "dialog">
                     <div><h3 id = "code"></h3><h2 id = "send">↗️</h2></div>
-                    <button value = "start room">START ROOM</button>
+                    <button>START ROOM</button>
                 </form>
             </dialog>
             <dialog id = "enter" class = "lobby">
                 <form method = "dialog">
-                    <input id = "room" type = "text" placeholder = "Write Room Code..." pattern = "^[A-Z0-9]{5}$" required>
-                    <button value = "enter room">ENTER ROOM</button>
+                    <input id = "join" type = "text" placeholder = "Write Room Code..." pattern = "^[A-Z0-9]{5}$" required>
+                    <button>ENTER ROOM</button>
                 </form>
             </dialog>
             <dialog id = "await">
             </dialog>
-            <div id = "shade" aria-hidden = "true">
-                <div data-piece = "top"></div>
-                <div data-piece = "left"></div>
-                <div data-piece = "right"></div>
-                <div data-piece = "bottom"></div>
-            </div>
             <div id = "table">
                 <div class = "ita decks">
                     <img class = "cards" src = "static/assets/table/decks/back/ita.webp" alt = "ita back">

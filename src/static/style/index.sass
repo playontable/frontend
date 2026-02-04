@@ -11,6 +11,20 @@ html, body
     -webkit-tap-highlight-color: transparent
 
 body
+    &::before
+        inset: 0
+        opacity: 0
+        z-index: 1
+        content: ""
+        position: fixed
+        pointer-events: none
+        transition: opacity 1.5s
+        background: rgba(0, 0, 0, 0.5)
+
+    &.shade::before
+        opacity: 1
+        pointer-events: auto
+
     *
         &:focus, &:focus-visible
             outline: none
@@ -142,14 +156,6 @@ main
                 &::placeholder
                     text-transform: none
 
-    #shade
-        z-index: 1
-        position: fixed
-
-        div
-            position: fixed
-            background: rgba(0, 0, 0, 0.5)
-
     #table
         flex: 1
         padding: 10px
@@ -178,16 +184,16 @@ main
         &:has(> .selected)
             cursor: pointer
 
-        .hide
+        .hands
+            outline-offset: 3px
+            outline: 3px solid rgb(0, 255, 0)
+
+        .hides
             opacity: 0
             visibility: hidden
             pointer-events: none
             will-change: opacity
             transition: opacity 1s linear, visibility 0s linear 1s
-
-        .hand
-            outline-offset: 3px
-            outline: 3px solid rgb(0, 255, 0)
 
         .decks
             top: 10px

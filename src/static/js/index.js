@@ -6,31 +6,26 @@ const {
     entry,
     start,
     enter,
+    awaitt,
     table,
     panel,
     allow,
-    shade,
     code,
     send
 } = Object.fromEntries([
     "entry",
     "start",
     "enter",
+    "await",
     "table",
     "panel",
     "allow",
-    "shade",
     "code",
     "send"
 ].map(id => [id, document.getElementById(id)]));
 
 const getSelectedChild = () => table.querySelector("#table > .selected");
-const toggleHandAndSend = () => {
-    const child = getSelectedChild();
-    child.classList.toggle("hand");
-    panel.className = child.className;
-    socket.send(JSON.stringify({hook: "drop", index: Array.from(table.children).indexOf(child)}));
-};
+
 const config = {
     onPress() {this.applyBounds({top: 10 - table?.scrollTop, left: 10 - table?.scrollLeft});},
     onDragStart() {socket.send(JSON.stringify({hook: "step", index: Array.from(table.children).indexOf(this.target)}));},
@@ -48,66 +43,44 @@ const config = {
 gsap.registerPlugin(Draggable);
 Draggable.create("#table > *", config);
 
-function openLobbyDialog(dialog) {
-    const r = dialog.getBoundingClientRect();
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-
-    const top = shade.querySelector("[data-piece='top']");
-    const left = shade.querySelector("[data-piece='left']");
-    const right = shade.querySelector("[data-piece='right']");
-    const bottom = shade.querySelector("[data-piece='bottom']");
-
-    top.style.top = "0";
-    top.style.left = "0";
-    top.style.width = vw + "px";
-    top.style.height = Math.max(0, r.top) + "px";
-
-    bottom.style.left = "0";
-    bottom.style.width = vw + "px";
-    bottom.style.top = Math.max(0, r.bottom) + "px";
-    bottom.style.height = Math.max(0, vh - r.bottom) + "px";
-
-    left.style.left = "0";
-    left.style.top = Math.max(0, r.top) + "px";
-    left.style.width = Math.max(0, r.left) + "px";
-    left.style.height = Math.max(0, r.height) + "px";
-
-    right.style.top = Math.max(0, r.top) + "px";
-    right.style.left = Math.max(0, r.right) + "px";
-    right.style.height = Math.max(0, r.height) + "px";
-    right.style.width = Math.max(0, vw - r.right) + "px";
-
-    dialog.show();
-}
-
-openLobbyDialog(entry);
+entry.show();
+document.body.classList.add("shade");
+send?.addEventListener("click", () => {navigator.share({text: code?.innerText});});
 
 entry?.addEventListener("close", () => {
     switch (entry.returnValue) {
         case "start room":
-            openLobbyDialog(start);
+            start?.show();
             socket?.send(JSON.stringify({hook: "make"}));
             break;
         case "enter room":
-            openLobbyDialog(enter);
+            enter?.show();
             break;
         case "start solo":
             socket?.send(JSON.stringify({hook: "make"}));
+            socket?.send(JSON.stringify({hook: "play"}));
             break;
     }
 });
 
+start?.addEventListener("close", () => {
+    socket?.send(JSON.stringify({hook: "play"}));
+});
+
+enter?.addEventListener("close", () => {
+    awaitt?.show();
+});
+
 const actions = {
-    hand: panel.querySelector("button[value='hand']"),
-    fall: panel.querySelector("button[value='fall']"),
-    draw: panel.querySelector("button[value='draw']"),
-    flip: panel.querySelector("button[value='flip']"),
-    roll: panel.querySelector("button[value='roll']"),
-    wipe: panel.querySelector("button[value='wipe']")
+    hand: panel?.querySelector("button[value = 'hand']"),
+    fall: panel?.querySelector("button[value = 'fall']"),
+    draw: panel?.querySelector("button[value = 'draw']"),
+    flip: panel?.querySelector("button[value = 'flip']"),
+    roll: panel?.querySelector("button[value = 'roll']"),
+    wipe: panel?.querySelector("button[value = 'wipe']")
 };
 
-function getActionsVisibility(selected) {
+function getActions(selected) {
     const decks = selected?.classList?.contains("decks");
     const cards = selected?.classList?.contains("cards");
     const chips = selected?.classList?.contains("chips");
@@ -128,24 +101,27 @@ function getActionsVisibility(selected) {
 }
 
 function setActionsVisibility({hand = false, fall = false, draw = false, flip = false, roll = false, wipe = true} = {}) {
-    actions.hand.hidden = !hand;
-    actions.fall.hidden = !fall;
-    actions.draw.hidden = !draw;
-    actions.flip.hidden = !flip;
-    actions.roll.hidden = !roll;
-    actions.wipe.hidden = !wipe;
+    actions?.hand.hidden = !hand;
+    actions?.fall.hidden = !fall;
+    actions?.draw.hidden = !draw;
+    actions?.flip.hidden = !flip;
+    actions?.roll.hidden = !roll;
+    actions?.wipe.hidden = !wipe;
 }
 
 panel?.addEventListener("toggle", () => {
-    if (panel.open) setActionsVisibility(getActionsVisibility(getSelectedChild()));
+    if (panel.open) setActionsVisibility(getActions(getSelectedChild()));
     else getSelectedChild()?.classList?.remove("selected");
 });
 
 panel?.addEventListener("close", () => {
     switch (panel.returnValue) {
         case "hand":
+            getSelectedChild()?.classList.toggle("hands");
+            socket.send(JSON.stringify({hook: "hand", index: Array.from(table.children).indexOf(getSelectedChild())}));
         case "fall":
-            toggleHandAndSend();
+            getSelectedChild()?.classList.toggle("hands");
+            socket.send(JSON.stringify({hook: "fall", index: Array.from(table.children).indexOf(getSelectedChild())}));
             break;
         case "draw":
             break;
@@ -166,7 +142,7 @@ allow?.addEventListener("close", () => {
             socket?.send(JSON.stringify({hook: "wipe", index: Array.from(table?.children).indexOf(getSelectedChild())}));
             break;
         case "back":
-            allow?.close();
+            allow.close();
             break;
     }
 });
@@ -207,7 +183,8 @@ socket?.addEventListener("message", (({data: json}) => {
             code.textContent = data;
             break;
         case "play":
-            start.close();
+            if (awaitt.open) awaitt.close();
+            document.body.classList.remove("shade");
             break;
         case "join":
             break;
@@ -223,9 +200,9 @@ socket?.addEventListener("message", (({data: json}) => {
             Draggable.create(clone, config);
             gsap.set(child, data);
             break;
-        case "drop":
-            child.classList.toggle("hide");
-            if (child === getSelectedChild()) {panel.removeAttribute("class"); child.classList.remove("selected");}
+        case "hand":
+        case "fall":
+            child.classList.toggle("hides");
             break;
         case "draw":
             break;
@@ -242,6 +219,4 @@ socket?.addEventListener("message", (({data: json}) => {
     }
 }));
 
-send?.addEventListener("click", () => {navigator.share({text: code?.innerText});});
-// play?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "play"}));});
 // join?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "join", data: room?.value.toUpperCase()}));});
