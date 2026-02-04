@@ -18,9 +18,7 @@ const {
     draw,
     flip,
     roll,
-    wipe,
-    okay,
-    back
+    wipe
 } = Object.fromEntries([
     "entry",
     "start",
@@ -38,9 +36,7 @@ const {
     "draw",
     "flip",
     "roll",
-    "wipe",
-    "okay",
-    "back"
+    "wipe"
 ].map(id => [id, document.getElementById(id)]));
 
 const getSelectedChild = () => table.querySelector("#table > .selected");
@@ -80,8 +76,16 @@ draw?.addEventListener("click", () => {});
 flip?.addEventListener("click", () => {});
 roll?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "roll", data: gsap.utils.shuffle([1, 2, 3, 4, 5, 6]), index: Array.from(table.children).indexOf(getSelectedChild())}));});
 wipe?.addEventListener("click", () => {allow?.showModal();});
-okay?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "wipe", index: Array.from(table?.children).indexOf(getSelectedChild())}));});
-back?.addEventListener("click", () => {allow?.close();});
+wipe?.addEventListener("close", () => {
+    switch (entry.returnValue) {
+        case "wipe":
+            socket?.send(JSON.stringify({hook: "wipe", index: Array.from(table?.children).indexOf(getSelectedChild())}));
+            break;
+        case "back":
+            allow?.close();
+            break;
+    }
+});
 
 const socket = new WebSocket("wss://api.playontable.com/websocket/");
 socket?.addEventListener("message", (({data: json}) => {
