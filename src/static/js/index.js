@@ -9,9 +9,9 @@ const {
     table,
     panel,
     allow,
+    shade,
     code,
-    send,
-    overlay
+    send
 } = Object.fromEntries([
     "entry",
     "start",
@@ -19,9 +19,9 @@ const {
     "table",
     "panel",
     "allow",
+    "shade",
     "code",
-    "send",
-    "overlay"
+    "send"
 ].map(id => [id, document.getElementById(id)]));
 
 const getSelectedChild = () => table.querySelector("#table > .selected");
@@ -65,15 +65,15 @@ entry?.addEventListener("close", () => {
     }
 });
 
-function layoutOverlay() {
+function layoutShade() {
     const r = getSelectedChild()?.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
-    const top = overlay.querySelector("[data-piece='top']");
-    const left = overlay.querySelector("[data-piece='left']");
-    const right = overlay.querySelector("[data-piece='right']");
-    const bottom = overlay.querySelector("[data-piece='bottom']");
+    const top = shade.querySelector("[data-piece='top']");
+    const left = shade.querySelector("[data-piece='left']");
+    const right = shade.querySelector("[data-piece='right']");
+    const bottom = shade.querySelector("[data-piece='bottom']");
 
     top.style.top = "0px";
     top.style.left = "0px";
@@ -97,22 +97,22 @@ function layoutOverlay() {
 }
 
 function openDialog() {
-    overlay.hidden = false;
-    layoutOverlay();
+    shade.hidden = false;
+    layoutShade();
     panel.style.zIndex = String((parseInt(getComputedStyle(getSelectedChild()).zIndex, 10) || 0) + 1);
     panel.show();
-    document.addEventListener("scroll", layoutOverlay, true);
-    window.addEventListener("resize", layoutOverlay);
+    document.addEventListener("scroll", layoutShade, true);
+    window.addEventListener("resize", layoutShade);
 }
 
 function closeDialog() {
     panel.close();
-    overlay.hidden = true;
-    document.removeEventListener("scroll", layoutOverlay, true);
-    window.removeEventListener("resize", layoutOverlay);
+    shade.hidden = true;
+    document.removeEventListener("scroll", layoutShade, true);
+    window.removeEventListener("resize", layoutShade);
 }
 
-overlay.addEventListener("click", closeDialog);
+shade.addEventListener("click", closeDialog);
 
 const actions = {
     hand: panel.querySelector("button[value='hand']"),
