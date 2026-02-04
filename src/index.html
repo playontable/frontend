@@ -91,14 +91,16 @@
                 <img class = "white dames" src = "static/assets/table/dames/white.webp" alt = "white dame">
                 <img class = "black dames" src = "static/assets/table/dames/black.webp" alt = "black dame">
             </div>
-            <div id = "panel">
-                <button id = "hand">HAND</button>
-                <button id = "fall">FALL</button>
-                <button id = "draw">DRAW<span>❌ JOLLY</span><span>✅ JOLLY</span></button>
-                <button id = "flip">FLIP</button>
-                <button id = "roll">ROLL</button>
-                <button id = "wipe">🗑️</button>
-            </div>
+            <dialog id = "panel">
+                <form method = "dialog">
+                    <button value = "hand">HAND</button>
+                    <button value = "fall" hidden>FALL</button>
+                    <button value = "draw" hidden>DRAW<span>❌ JOLLY</span><span>✅ JOLLY</span></button>
+                    <button value = "flip" hidden>FLIP</button>
+                    <button value = "roll" hidden>ROLL</button>
+                    <button value = "wipe">🗑️</button>
+                </form>
+            </dialog>
             <dialog id = "allow">
                 <form method = "dialog">
                     <button value = "wipe">WIPE</button>

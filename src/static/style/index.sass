@@ -255,44 +255,49 @@ main
             &.black
                 left: 490px
 
-    #panel
-        gap: 10px
-        display: none
+    #panel:open
+        left: 20px
+        margin: 10px
+        border: none
+        bottom: 20px
+        padding: 10px
+        border-radius: 5px
+        width: calc(100dvw - 80px)
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.5)
 
-        button:not(#wipe)
-            flex: 1
-            padding: 0
+        form
+            gap: 10px
             height: 100%
-            border: none
-            display: none
-            cursor: pointer
-            border-radius: 5px
-            font-family: Outfit-Bold, sans-serif
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5)
-
-        #draw
-            span
-                margin: 0
-                display: none
-                font-size: 9px
-                text-align: center
-                font-family: Outfit-Bold, sans-serif
-
-        #wipe
-            padding: 0
-            border: none
-            font-size: 24px
-            cursor: pointer
-            background: none
-            border-radius: 5px
-
-        &[class]:not(.hand) #hand, &.hand #fall, &.decks #draw, &.decks.fra:not(.jolly) #draw > span:nth-child(1), &.decks.fra.jolly #draw > span:nth-child(2), &.cards #flip, &.dices #roll
-            display: block
-
-        &[class]
             display: flex
-            height: 38.4px 
-            align-items: center
+            align-items: stretch
+
+            button:not(button[value="wipe"])
+                flex: 1
+                padding: 0
+                border: none
+                height: 40px
+                cursor: pointer
+                border-radius: 5px
+                background: rgb(230, 230, 230)
+                font-family: Outfit-Bold, sans-serif
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.5)
+
+            button[value="draw"]
+                span
+                    margin: 0
+                    display: none
+                    font-size: 10px
+                    text-align: center
+                    font-family: Outfit-Bold, sans-serif
+
+            button[value="wipe"]
+                padding: 0
+                border: none
+                font-size: 24px
+                cursor: pointer
+                background: none
+                border-radius: 5px
+                filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.25))
 
     #allow:open
         gap: 10px
@@ -327,11 +332,11 @@ main
             border-radius: 90px
             background: rgb(15, 80, 55)
 
-    #panel[class]
-        #hand:hover, #fall:hover, #draw:hover, #flip:hover, #roll:hover
+    #panel:open
+        button:not(button[value="wipe"]):hover
             border-radius: 90px
             background: rgb(204, 204, 204)
-        #wipe:hover
+        button[value="wipe"]:hover
             will-change: transform
             animation: tada 1.5s ease-in-out
 

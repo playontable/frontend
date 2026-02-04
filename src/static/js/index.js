@@ -1,6 +1,7 @@
 import {gsap} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/+esm";
 import {Draggable} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/Draggable.min.js";
 
+const socket = new WebSocket("wss://api.playontable.com/websocket/");
 const {
     entry,
     start,
@@ -12,13 +13,7 @@ const {
     send,
     play,
     room,
-    join,
-    hand,
-    fall,
-    draw,
-    flip,
-    roll,
-    wipe
+    join
 } = Object.fromEntries([
     "entry",
     "start",
@@ -30,13 +25,7 @@ const {
     "send",
     "play",
     "room",
-    "join",
-    "hand",
-    "fall",
-    "draw",
-    "flip",
-    "roll",
-    "wipe"
+    "join"
 ].map(id => [id, document.getElementById(id)]));
 
 const getSelectedChild = () => table.querySelector("#table > .selected");
@@ -50,9 +39,21 @@ const config = {
     onPress() {this.applyBounds({top: 10 - table?.scrollTop, left: 10 - table?.scrollLeft});},
     onDragStart() {socket.send(JSON.stringify({hook: "step", index: Array.from(table.children).indexOf(this.target)}));},
     onDrag() {socket.send(JSON.stringify({hook: "drag", data: {x: this.x, y: this.y, zIndex: parseInt(getComputedStyle(this.target).zIndex, 10)}, index: Array.from(table.children).indexOf(this.target)}));},
-    onClick() {if (this.target.classList.contains("copy")) {table.querySelectorAll(".selected").forEach(child => child.classList.remove("selected")); this.target.classList.add("selected"); panel.className = this.target.className;}},
-    onDragEnd() {socket.send(JSON.stringify({hook: "step", index: Array.from(table.children).indexOf(this.target)})); if (!this.target.classList.contains("copy")) socket.send(JSON.stringify({hook: "copy", data: {x: this.startX, y: this.startY}, index: Array.from(table.children).indexOf(this.target)}));}
+    onClick() {
+        if (this.target.classList.contains("copy")) {
+            table.querySelectorAll(".selected").forEach(child => child.classList.remove("selected"));
+            this.target.classList.add("selected");
+            panel.show();
+        }
+    },
+    onDragEnd() {
+        socket.send(JSON.stringify({hook: "step", index: Array.from(table.children).indexOf(this.target)}));
+        if (!this.target.classList.contains("copy")) socket.send(JSON.stringify({hook: "copy", data: {x: this.startX, y: this.startY}, index: Array.from(table.children).indexOf(this.target)}));}
 }
+
+gsap.registerPlugin(Draggable);
+Draggable.create("#table > *", config);
+table?.addEventListener("click", (event) => {if (event.target === event.currentTarget) {panel?.removeAttribute("class"); getSelectedChild()?.classList?.remove("selected");}});
 
 entry?.showModal();
 entry?.addEventListener("close", () => {
@@ -64,19 +65,35 @@ entry?.addEventListener("close", () => {
         case "enter room":
             enter?.showModal();
             break;
+        case "":
+            socket?.send(JSON.stringify({hook: "solo"}));
     }
 });
 
 send?.addEventListener("click", () => {navigator.share({text: code?.innerText});});
 play?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "play"}));});
 join?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "join", data: room?.value.toUpperCase()}));});
-hand?.addEventListener("click", () => {toggleHandAndSend();});
-fall?.addEventListener("click", () => {toggleHandAndSend();});
-draw?.addEventListener("click", () => {});
-flip?.addEventListener("click", () => {});
-roll?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "roll", data: gsap.utils.shuffle([1, 2, 3, 4, 5, 6]), index: Array.from(table.children).indexOf(getSelectedChild())}));});
-wipe?.addEventListener("click", () => {allow?.showModal();});
-wipe?.addEventListener("close", () => {
+
+panel?.addEventListener("close", () => {
+    switch (entry.returnValue) {
+        case "hand":
+        case "fall":
+            toggleHandAndSend();
+            break;
+        case "draw":
+            break;
+        case "flip":
+            break;
+        case "roll":
+            socket?.send(JSON.stringify({hook: "roll", data: gsap.utils.shuffle([1, 2, 3, 4, 5, 6]), index: Array.from(table.children).indexOf(getSelectedChild())}));
+            break;
+        case "wipe":
+            allow?.showModal();
+            break;
+    }
+});
+
+allow?.addEventListener("close", () => {
     switch (entry.returnValue) {
         case "wipe":
             socket?.send(JSON.stringify({hook: "wipe", index: Array.from(table?.children).indexOf(getSelectedChild())}));
@@ -87,7 +104,6 @@ wipe?.addEventListener("close", () => {
     }
 });
 
-const socket = new WebSocket("wss://api.playontable.com/websocket/");
 socket?.addEventListener("message", (({data: json}) => {
     const {hook, data, index} = JSON.parse(json);
     const child = (index !== undefined && index !== null) ? table.children[index] : null;
@@ -127,7 +143,7 @@ socket?.addEventListener("message", (({data: json}) => {
             start.close();
             break;
         case "join":
-
+            break;
         case "drag":
             gsap.set(child, data);
             break;
@@ -135,6 +151,7 @@ socket?.addEventListener("message", (({data: json}) => {
             child.classList.toggle("dragging");
             break;
         case "copy":
+            console.log(child);
             const clone = table.appendChild(child.cloneNode(true));
             clone.classList.add("copy");
             Draggable.create(clone, config);
@@ -158,7 +175,3 @@ socket?.addEventListener("message", (({data: json}) => {
             break;
     }
 }));
-
-gsap.registerPlugin(Draggable);
-Draggable.create("#table > *", config);
-table?.addEventListener("click", (event) => {if (event.target === event.currentTarget) {panel?.removeAttribute("class"); getSelectedChild()?.classList?.remove("selected");}});
