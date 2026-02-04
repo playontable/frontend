@@ -62,19 +62,18 @@ entry?.showModal();
 entry?.addEventListener("close", () => {
     switch (entry.returnValue) {
         case "start room":
-            start.showModal();
-            socket.send(JSON.stringify({hook: "make"}));
+            start?.showModal();
+            socket?.send(JSON.stringify({hook: "make"}));
             break;
         case "enter room":
-            enter.showModal();
+            enter?.showModal();
             break;
     }
 });
 
+send?.addEventListener("click", () => {navigator.share({text: code?.innerText});});
 play?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "play"}));});
 join?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "join", data: room?.value.toUpperCase()}));});
-
-send?.addEventListener("click", () => {navigator.share({text: code?.innerText});});
 hand?.addEventListener("click", () => {toggleHandAndSend();});
 fall?.addEventListener("click", () => {toggleHandAndSend();});
 draw?.addEventListener("click", () => {});
