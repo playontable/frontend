@@ -26,16 +26,22 @@
                     <div class = "else"><hr><span>OR</span><hr></div>
                     <button value = "enter room">ENTER ROOM</button>
                     <div class = "else"><hr><span>OR</span><hr></div>
-                    <button>START SOLO</button>
+                    <button value = "start solo">START SOLO</button>
                 </form>
             </dialog>
             <dialog id = "start" class = "lobby">
-                <div><h3 id = "code"></h3><h2 id = "send">↗️</h2></div>
-                <button id = "play">START ROOM</button>
+                <form method = "dialog">
+                    <div><h3 id = "code"></h3><h2 id = "send">↗️</h2></div>
+                    <button value = "start room">START ROOM</button>
+                </form>
             </dialog>
             <dialog id = "enter" class = "lobby">
-                <input id = "room" type = "text" placeholder = "Write Room Code..." pattern = "^[A-Z0-9]{5}$">
-                <button id = "join">ENTER ROOM</button>
+                <form method = "dialog">
+                    <input id = "room" type = "text" placeholder = "Write Room Code..." pattern = "^[A-Z0-9]{5}$" required>
+                    <button value = "enter room">ENTER ROOM</button>
+                </form>
+            </dialog>
+            <dialog id = "await">
             </dialog>
             <div id = "table">
                 <div class = "ita decks">
@@ -94,10 +100,10 @@
             <dialog id = "panel">
                 <form method = "dialog">
                     <button value = "hand">HAND</button>
-                    <button value = "fall" hidden>FALL</button>
-                    <button value = "draw" hidden>DRAW<span>❌ JOLLY</span><span>✅ JOLLY</span></button>
-                    <button value = "flip" hidden>FLIP</button>
-                    <button value = "roll" hidden>ROLL</button>
+                    <button value = "fall">FALL</button>
+                    <button value = "draw">DRAW<span>❌ JOLLY</span><span>✅ JOLLY</span></button>
+                    <button value = "flip">FLIP</button>
+                    <button value = "roll">ROLL</button>
                     <button value = "wipe">🗑️</button>
                 </form>
             </dialog>
@@ -107,6 +113,12 @@
                     <button value = "back">BACK</button>
                 </form>
             </dialog>
+            <div id = "overlay" hidden aria-hidden = "true">
+                <div class = "piece" data-piece = "top"></div>
+                <div class = "piece" data-piece = "left"></div>
+                <div class = "piece" data-piece = "right"></div>
+                <div class = "piece" data-piece = "bottom"></div>
+            </div>
         </main>
         <script src = "static/js/index.js" type = "module"></script>
     </body>

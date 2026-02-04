@@ -10,9 +10,6 @@ html, body
     background: rgb(0, 0, 0)
     -webkit-tap-highlight-color: transparent
 
-    ::backdrop
-        background: rgba(0, 0, 0, 0.5)
-
 body
     *
         &:focus, &:focus-visible
@@ -71,71 +68,73 @@ main
                     font-size: 10px
                     font-family: Outfit-Bold, sans-serif
 
-    .lobby#start:open, .lobby#enter:open
+    .lobby#start:open form, .lobby#enter:open form
         gap: 10px
         width: 200px
         display: flex
         flex-direction: column
 
     .lobby#start:open
-        div
-            min-height: 40px
-            line-height: 40px
-            position: relative
-            border-radius: 5px
-            background: rgb(204, 204, 204)
-
-            &::before
-                inset: 0
-                opacity: 1
-                content: ""
-                position: absolute
+        form
+            div
+                min-height: 40px
+                line-height: 40px
+                position: relative
                 border-radius: 5px
-                pointer-events: none
-                animation: load 2s linear infinite
-                transition: opacity 0.2s ease-out 2s
-                background: linear-gradient(90deg, rgba(204, 204, 204, 0.55) 0%, rgba(255, 255, 255, 0.85) 50%, rgba(204, 204, 204, 0.55) 100%) 0 0 / 200% 100%
+                background: rgb(204, 204, 204)
 
-            #code
-                margin: 0
-                width: 100%
-                display: block
-                visibility: hidden
-                text-align: center
-                color: rgb(0, 0, 0)
-                font-family: Outfit-Bold, sans-serif
+                &::before
+                    inset: 0
+                    opacity: 1
+                    content: ""
+                    position: absolute
+                    border-radius: 5px
+                    pointer-events: none
+                    animation: load 2s linear infinite
+                    transition: opacity 0.2s ease-out 2s
+                    background: linear-gradient(90deg, rgba(204, 204, 204, 0.55) 0%, rgba(255, 255, 255, 0.85) 50%, rgba(204, 204, 204, 0.55) 100%) 0 0 / 200% 100%
 
-            #send
-                top: 50%
-                margin: 0
-                padding: 0
-                right: 3.5px
-                display: block
-                cursor: pointer
-                visibility: hidden
-                position: absolute
-                transform: translateY(-50%)
+                #code
+                    margin: 0
+                    width: 100%
+                    display: block
+                    visibility: hidden
+                    text-align: center
+                    color: rgb(0, 0, 0)
+                    font-family: Outfit-Bold, sans-serif
 
-            &:has(#code:not(:empty))::before
-                opacity: 0
-            &:has(#code:not(:empty))
-                will-change: transform, filter
-                animation: zoom 0.2s ease-out 2s
+                #send
+                    top: 50%
+                    margin: 0
+                    padding: 0
+                    right: 3.5px
+                    display: block
+                    cursor: pointer
+                    visibility: hidden
+                    position: absolute
+                    transform: translateY(-50%)
 
-            &:has(#code:not(:empty)) #code, &:has(#code:not(:empty)) #send
-                animation: show 0.2s ease-out 2s both
+                &:has(#code:not(:empty))::before
+                    opacity: 0
+                &:has(#code:not(:empty))
+                    will-change: transform, filter
+                    animation: zoom 0.2s ease-out 2s
+
+                &:has(#code:not(:empty)) #code, &:has(#code:not(:empty)) #send
+                    animation: show 0.2s ease-out 2s both
 
     .lobby#enter:open
-        #room
-            padding: 10px 0
-            border: 1px solid
-            text-align: center
-            border-radius: 5px
-            text-transform: uppercase
-            font-family: Outfit-Bold, sans-serif
+        form
+            input
+                padding: 10px 0
+                border: 1px solid
+                text-align: center
+                border-radius: 5px
+                text-transform: uppercase
+                font-family: Outfit-Bold, sans-serif
 
-            &::placeholder
-                text-transform: none
+                &::placeholder
+                    text-transform: none
 
     #table
         flex: 1
@@ -263,7 +262,7 @@ main
         padding: 10px
         border-radius: 5px
         width: calc(100dvw - 80px)
-        box-shadow: 0 0 50px rgba(0, 0, 0, 0.5)
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5)
 
         form
             gap: 10px
@@ -300,31 +299,42 @@ main
                 filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.25))
 
     #allow:open
-        gap: 10px
         border: none
         width: 250px
         padding: 10px
-        display: flex
         user-select: none
         border-radius: 5px
-        align-items: stretch
-        flex-direction: column
-        justify-content: space-between
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5)
 
-        button
-            border: none
-            cursor: pointer
-            padding: 10.8px 0
-            border-radius: 5px
-            font-family: Outfit-Bold, sans-serif
-            box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
+        form
+            gap: 10px
+            display: flex
+            align-items: stretch
+            flex-direction: column
+            justify-content: space-between
 
-        button[value="wipe"]
-            color: rgb(255, 255, 255)
-            background: rgb(255, 102, 102)
-        button[value="back"]
-            background: rgb(255, 255, 255)
+            button
+                border: none
+                cursor: pointer
+                padding: 10.8px 0
+                border-radius: 5px
+                font-family: Outfit-Bold, sans-serif
+                box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
+
+            button[value="wipe"]
+                color: rgb(255, 255, 255)
+                background: rgb(255, 102, 102)
+            button[value="back"]
+                background: rgb(255, 255, 255)
+
+    #overlay
+        inset: 0
+        z-index: 1000
+        position: fixed
+
+    #overlay .piece
+        position: fixed
+        background: rgba(0, 0, 0, 0.5)
 
 @media (hover: hover) and (pointer: fine)
     .lobby#entry:open

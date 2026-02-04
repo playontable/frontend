@@ -11,9 +11,7 @@ const {
     allow,
     code,
     send,
-    play,
-    room,
-    join
+    overlay
 } = Object.fromEntries([
     "entry",
     "start",
@@ -23,9 +21,7 @@ const {
     "allow",
     "code",
     "send",
-    "play",
-    "room",
-    "join"
+    "overlay"
 ].map(id => [id, document.getElementById(id)]));
 
 const getSelectedChild = () => table.querySelector("#table > .selected");
@@ -41,9 +37,8 @@ const config = {
     onDrag() {socket.send(JSON.stringify({hook: "drag", data: {x: this.x, y: this.y, zIndex: parseInt(getComputedStyle(this.target).zIndex, 10)}, index: Array.from(table.children).indexOf(this.target)}));},
     onClick() {
         if (this.target.classList.contains("copy")) {
-            table.querySelectorAll(".selected").forEach(child => child.classList.remove("selected"));
             this.target.classList.add("selected");
-            panel.show();
+            openDialog();
         }
     },
     onDragEnd() {
@@ -53,7 +48,6 @@ const config = {
 
 gsap.registerPlugin(Draggable);
 Draggable.create("#table > *", config);
-table?.addEventListener("click", (event) => {if (event.target === event.currentTarget) {panel?.removeAttribute("class"); getSelectedChild()?.classList?.remove("selected");}});
 
 entry?.showModal();
 entry?.addEventListener("close", () => {
@@ -65,17 +59,106 @@ entry?.addEventListener("close", () => {
         case "enter room":
             enter?.showModal();
             break;
-        case "":
-            socket?.send(JSON.stringify({hook: "solo"}));
+        case "start solo":
+            socket?.send(JSON.stringify({hook: "make"}));
+            break;
     }
 });
 
-send?.addEventListener("click", () => {navigator.share({text: code?.innerText});});
-play?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "play"}));});
-join?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "join", data: room?.value.toUpperCase()}));});
+function layoutOverlay() {
+    const r = getSelectedChild()?.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    const top = overlay.querySelector("[data-piece='top']");
+    const left = overlay.querySelector("[data-piece='left']");
+    const right = overlay.querySelector("[data-piece='right']");
+    const bottom = overlay.querySelector("[data-piece='bottom']");
+
+    top.style.top = "0px";
+    top.style.left = "0px";
+    top.style.width = vw + "px";
+    top.style.height = Math.max(0, r.top) + "px";
+
+    bottom.style.left = "0px";
+    bottom.style.width = vw + "px";
+    bottom.style.top = Math.max(0, r.bottom) + "px";
+    bottom.style.height = Math.max(0, vh - r.bottom) + "px";
+
+    left.style.left = "0px";
+    left.style.top = Math.max(0, r.top) + "px";
+    left.style.width = Math.max(0, r.left) + "px";
+    left.style.height = Math.max(0, r.height) + "px";
+
+    right.style.top = Math.max(0, r.top) + "px";
+    right.style.left = Math.max(0, r.right) + "px";
+    right.style.height = Math.max(0, r.height) + "px";
+    right.style.width = Math.max(0, vw - r.right) + "px";
+}
+
+function openDialog() {
+    overlay.hidden = false;
+    layoutOverlay();
+    panel.style.zIndex = String((parseInt(getComputedStyle(getSelectedChild()).zIndex, 10) || 0) + 1);
+    panel.show();
+    document.addEventListener("scroll", layoutOverlay, true);
+    window.addEventListener("resize", layoutOverlay);
+}
+
+function closeDialog() {
+    panel.close();
+    overlay.hidden = true;
+    document.removeEventListener("scroll", layoutOverlay, true);
+    window.removeEventListener("resize", layoutOverlay);
+}
+
+overlay.addEventListener("click", closeDialog);
+
+const actions = {
+    hand: panel.querySelector("button[value='hand']"),
+    fall: panel.querySelector("button[value='fall']"),
+    draw: panel.querySelector("button[value='draw']"),
+    flip: panel.querySelector("button[value='flip']"),
+    roll: panel.querySelector("button[value='roll']"),
+    wipe: panel.querySelector("button[value='wipe']")
+};
+
+function getActionsVisibility(selected) {
+    const decks = selected?.classList?.contains("decks");
+    const cards = selected?.classList?.contains("cards");
+    const chips = selected?.classList?.contains("chips");
+    const dices = selected?.classList?.contains("dices");
+    const board = selected?.classList?.contains("board");
+    const chess = selected?.classList?.contains("chess");
+    const dames = selected?.classList?.contains("dames");
+    const hands = selected?.classList?.contains("hands");
+
+    return {
+        hand: !!selected && (decks || cards || chips || dices || board || chess || dames),
+        fall: !!selected && hands,
+        draw: !!selected && decks,
+        flip: !!selected && cards,
+        roll: !!selected && dices,
+        wipe: !!selected
+    };
+}
+
+function setActionsVisibility({hand = false, fall = false, draw = false, flip = false, roll = false, wipe = true} = {}) {
+    actions.hand.hidden = !hand;
+    actions.fall.hidden = !fall;
+    actions.draw.hidden = !draw;
+    actions.flip.hidden = !flip;
+    actions.roll.hidden = !roll;
+    actions.wipe.hidden = !wipe;
+}
+
+panel?.addEventListener("toggle", () => {
+    if (panel.open) setActionsVisibility(getActionsVisibility(getSelectedChild()));
+    else getSelectedChild()?.classList?.remove("selected");
+});
 
 panel?.addEventListener("close", () => {
-    switch (entry.returnValue) {
+    switch (panel.returnValue) {
         case "hand":
         case "fall":
             toggleHandAndSend();
@@ -94,7 +177,7 @@ panel?.addEventListener("close", () => {
 });
 
 allow?.addEventListener("close", () => {
-    switch (entry.returnValue) {
+    switch (allow.returnValue) {
         case "wipe":
             socket?.send(JSON.stringify({hook: "wipe", index: Array.from(table?.children).indexOf(getSelectedChild())}));
             break;
@@ -151,7 +234,6 @@ socket?.addEventListener("message", (({data: json}) => {
             child.classList.toggle("dragging");
             break;
         case "copy":
-            console.log(child);
             const clone = table.appendChild(child.cloneNode(true));
             clone.classList.add("copy");
             Draggable.create(clone, config);
@@ -175,3 +257,7 @@ socket?.addEventListener("message", (({data: json}) => {
             break;
     }
 }));
+
+send?.addEventListener("click", () => {navigator.share({text: code?.innerText});});
+// play?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "play"}));});
+// join?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "join", data: room?.value.toUpperCase()}));});
