@@ -38,7 +38,6 @@ const config = {
     onClick() {
         if (this.target.classList.contains("copy")) {
             this.target.classList.add("selected");
-            openDialog();
         }
     },
     onDragEnd() {
@@ -49,24 +48,8 @@ const config = {
 gsap.registerPlugin(Draggable);
 Draggable.create("#table > *", config);
 
-entry?.showModal();
-entry?.addEventListener("close", () => {
-    switch (entry.returnValue) {
-        case "start room":
-            start?.showModal();
-            socket?.send(JSON.stringify({hook: "make"}));
-            break;
-        case "enter room":
-            enter?.showModal();
-            break;
-        case "start solo":
-            socket?.send(JSON.stringify({hook: "make"}));
-            break;
-    }
-});
-
-function layoutShade() {
-    const r = getSelectedChild()?.getBoundingClientRect();
+function openLobbyDialog(dialog) {
+    const r = dialog.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
@@ -75,17 +58,17 @@ function layoutShade() {
     const right = shade.querySelector("[data-piece='right']");
     const bottom = shade.querySelector("[data-piece='bottom']");
 
-    top.style.top = "0px";
-    top.style.left = "0px";
+    top.style.top = "0";
+    top.style.left = "0";
     top.style.width = vw + "px";
     top.style.height = Math.max(0, r.top) + "px";
 
-    bottom.style.left = "0px";
+    bottom.style.left = "0";
     bottom.style.width = vw + "px";
     bottom.style.top = Math.max(0, r.bottom) + "px";
     bottom.style.height = Math.max(0, vh - r.bottom) + "px";
 
-    left.style.left = "0px";
+    left.style.left = "0";
     left.style.top = Math.max(0, r.top) + "px";
     left.style.width = Math.max(0, r.left) + "px";
     left.style.height = Math.max(0, r.height) + "px";
@@ -94,25 +77,26 @@ function layoutShade() {
     right.style.left = Math.max(0, r.right) + "px";
     right.style.height = Math.max(0, r.height) + "px";
     right.style.width = Math.max(0, vw - r.right) + "px";
+
+    dialog.show();
 }
 
-function openDialog() {
-    shade.hidden = false;
-    layoutShade();
-    panel.style.zIndex = String((parseInt(getComputedStyle(getSelectedChild()).zIndex, 10) || 0) + 1);
-    panel.show();
-    document.addEventListener("scroll", layoutShade, true);
-    window.addEventListener("resize", layoutShade);
-}
+openLobbyDialog(entry);
 
-function closeDialog() {
-    panel.close();
-    shade.hidden = true;
-    document.removeEventListener("scroll", layoutShade, true);
-    window.removeEventListener("resize", layoutShade);
-}
-
-shade.addEventListener("click", closeDialog);
+entry?.addEventListener("close", () => {
+    switch (entry.returnValue) {
+        case "start room":
+            openLobbyDialog(start);
+            socket?.send(JSON.stringify({hook: "make"}));
+            break;
+        case "enter room":
+            openLobbyDialog(enter);
+            break;
+        case "start solo":
+            socket?.send(JSON.stringify({hook: "make"}));
+            break;
+    }
+});
 
 const actions = {
     hand: panel.querySelector("button[value='hand']"),

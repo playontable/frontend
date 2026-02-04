@@ -23,6 +23,7 @@ main
     height: calc(100dvh - 20px)
 
     .lobby:open
+        z-index: 2
         border: none
         padding: 10px
         user-select: none
@@ -48,6 +49,8 @@ main
             background: rgb(255, 102, 102)
 
     .lobby#entry:open
+        top: calc(50dvh - 100px)
+
         form
             gap: 10px
             width: 200px
@@ -67,6 +70,9 @@ main
                     margin: 0
                     font-size: 10px
                     font-family: Outfit-Bold, sans-serif
+
+    .lobby#start:open, .lobby#enter:open
+        top: calc(50dvh - 54.2px)
 
     .lobby#start:open form, .lobby#enter:open form
         gap: 10px
@@ -135,6 +141,14 @@ main
 
                 &::placeholder
                     text-transform: none
+
+    #shade
+        z-index: 1
+        position: fixed
+
+        div
+            position: fixed
+            background: rgba(0, 0, 0, 0.5)
 
     #table
         flex: 1
@@ -326,15 +340,6 @@ main
                 background: rgb(255, 102, 102)
             button[value="back"]
                 background: rgb(255, 255, 255)
-
-    #shade
-        inset: 0
-        z-index: 1000
-        position: fixed
-
-        .piece
-            position: fixed
-            background: rgba(0, 0, 0, 0.5)
 
 @media (hover: hover) and (pointer: fine)
     .lobby#entry:open
