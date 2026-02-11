@@ -23,25 +23,25 @@
             <dialog id = "entry" class = "lobby">
                 <form method = "dialog">
                     <button value = "start room">START ROOM</button>
-                    <div class = "else"><hr><span>OR</span><hr></div>
                     <button value = "enter room">ENTER ROOM</button>
-                    <div class = "else"><hr><span>OR</span><hr></div>
                     <button value = "start solo">START SOLO</button>
                 </form>
             </dialog>
             <dialog id = "start" class = "lobby">
                 <form method = "dialog">
                     <div><h3 id = "code"></h3><h2 id = "send">↗️</h2></div>
-                    <button>START ROOM</button>
+                    <button value = "start room">START ROOM</button>
+                    <button value = "going back">GOING BACK</button>
                 </form>
             </dialog>
             <dialog id = "enter" class = "lobby">
                 <form method = "dialog">
                     <input id = "join" type = "text" placeholder = "Write Room Code..." pattern = "^[A-Z0-9]{5}$" required>
-                    <button>ENTER ROOM</button>
+                    <button value = "enter room">ENTER ROOM</button>
+                    <button value = "going back">GOING BACK</button>
                 </form>
             </dialog>
-            <dialog id = "await">
+            <dialog id = "watch" class = "lobby">
             </dialog>
             <div id = "table">
                 <div class = "ita decks">

@@ -7,10 +7,11 @@ html, body
     margin: 0
     height: 100%
     user-select: none
-    background: rgb(0, 0, 0)
     -webkit-tap-highlight-color: transparent
 
 body
+    background: rgb(0, 0, 0)
+
     &::before
         inset: 0
         opacity: 0
@@ -18,8 +19,8 @@ body
         content: ""
         position: fixed
         pointer-events: none
-        transition: opacity 1.5s
         background: rgba(0, 0, 0, 0.5)
+        transition: opacity 1.5s ease 0.5s
 
     &.shade::before
         opacity: 1
@@ -42,57 +43,61 @@ main
         padding: 10px
         user-select: none
         border-radius: 5px
+        top: calc(50dvh - 54.2px)
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5)
 
-        button
-            height: 40px
-            border: none
-            cursor: pointer
-            padding: 10px 0
-            border-radius: 5px
-            color: rgb(255, 255, 255)
-            background: rgb(23, 123, 84)
-            font-family: Outfit-Bold, sans-serif
-            box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
-
-        button:disabled
-            pointer-events: none
-            will-change: transform
-            color: rgb(255, 255, 255)
-            animation: jolt 1.5s linear
-            background: rgb(255, 102, 102)
-
     .lobby#entry:open
-        top: calc(50dvh - 100px)
-
         form
             gap: 10px
             width: 200px
-            height: 200px
             display: flex
             flex-direction: column
 
-            .else
-                height: 20px
-                display: flex
-                align-items: center
+            button
+                height: 40px
+                border: none
+                cursor: pointer
+                padding: 10px 0
+                border-radius: 5px
+                color: rgb(255, 255, 255)
+                background: rgb(23, 123, 84)
+                font-family: Outfit-Bold, sans-serif
+                box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
 
-                hr
-                    flex: 0.4
-
-                span
-                    margin: 0
-                    font-size: 10px
-                    font-family: Outfit-Bold, sans-serif
+            button:disabled
+                pointer-events: none
+                will-change: transform
+                color: rgb(255, 255, 255)
+                animation: jolt 1.5s linear
+                background: rgb(255, 102, 102)
 
     .lobby#start:open, .lobby#enter:open
-        top: calc(50dvh - 54.2px)
+        form
+            gap: 10px
+            width: 200px
+            display: flex
+            flex-direction: column
 
-    .lobby#start:open form, .lobby#enter:open form
-        gap: 10px
-        width: 200px
-        display: flex
-        flex-direction: column
+            button[value="start room"], button[value="enter room"]
+                height: 40px
+                border: none
+                cursor: pointer
+                padding: 10px 0
+                border-radius: 5px
+                color: rgb(255, 255, 255)
+                background: rgb(23, 123, 84)
+                font-family: Outfit-Bold, sans-serif
+                box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
+
+            button[value="going back"]
+                height: 40px
+                border: none
+                cursor: pointer
+                padding: 10px 0
+                border-radius: 5px
+                background: rgb(255, 255, 255)
+                font-family: Outfit-Bold, sans-serif
+                box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
 
     .lobby#start:open
         form
@@ -349,9 +354,24 @@ main
 
 @media (hover: hover) and (pointer: fine)
     .lobby#entry:open
-        button:hover
+        form button:hover
             border-radius: 90px
             background: rgb(15, 80, 55)
+
+    .lobby#start:open
+        form button[value="start room"]:hover
+            border-radius: 90px
+            background: rgb(15, 80, 55)
+
+    .lobby#enter:open
+        form button[value="enter room"]:hover
+            border-radius: 90px
+            background: rgb(15, 80, 55)
+
+    .lobby#start:open, .lobby#enter:open
+        form button[value="going back"]:hover
+            border-radius: 90px
+            background: rgb(204, 204, 204)
 
     #panel:open
         button:not(button[value="wipe"]):hover

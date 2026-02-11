@@ -6,7 +6,7 @@ const {
     entry,
     start,
     enter,
-    awaitt,
+    watch,
     table,
     panel,
     allow,
@@ -16,7 +16,7 @@ const {
     "entry",
     "start",
     "enter",
-    "await",
+    "watch",
     "table",
     "panel",
     "allow",
@@ -68,7 +68,7 @@ start?.addEventListener("close", () => {
 });
 
 enter?.addEventListener("close", () => {
-    awaitt?.show();
+    watch?.show();
 });
 
 const actions = {
@@ -101,12 +101,12 @@ function getActions(selected) {
 }
 
 function setActionsVisibility({hand = false, fall = false, draw = false, flip = false, roll = false, wipe = true} = {}) {
-    actions?.hand.hidden = !hand;
-    actions?.fall.hidden = !fall;
-    actions?.draw.hidden = !draw;
-    actions?.flip.hidden = !flip;
-    actions?.roll.hidden = !roll;
-    actions?.wipe.hidden = !wipe;
+    actions.hand.hidden = !hand;
+    actions.fall.hidden = !fall;
+    actions.draw.hidden = !draw;
+    actions.flip.hidden = !flip;
+    actions.roll.hidden = !roll;
+    actions.wipe.hidden = !wipe;
 }
 
 panel?.addEventListener("toggle", () => {
@@ -183,7 +183,7 @@ socket?.addEventListener("message", (({data: json}) => {
             code.textContent = data;
             break;
         case "play":
-            if (awaitt.open) awaitt.close();
+            if (watch.open) watch.close();
             document.body.classList.remove("shade");
             break;
         case "join":
