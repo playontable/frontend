@@ -18,9 +18,9 @@
     <meta name = "description" content = "Let's play any game on a virtual realtime multiplayer table with PlayOnTable.com">
     <script>if ("serviceWorker" in navigator) window.addEventListener("load", () => {navigator.serviceWorker.register("sw.js");});</script>
 </head>
-    <body oncontextmenu = "return false">
+    <body oncontextmenu = "return false" class = "shade">
         <main>
-            <dialog id = "entry" class = "lobby">
+            <dialog id = "entry" class = "lobby" open>
                 <form method = "dialog">
                     <button value = "start room">START ROOM</button>
                     <button value = "enter room">ENTER ROOM</button>

@@ -43,8 +43,6 @@ const config = {
 gsap.registerPlugin(Draggable);
 Draggable.create("#table > *", config);
 
-entry.show();
-document.body.classList.add("shade");
 send?.addEventListener("click", () => {navigator.share({text: code?.innerText});});
 
 entry?.addEventListener("close", () => {
