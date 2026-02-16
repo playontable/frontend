@@ -45,7 +45,7 @@ main
             display: flex
             flex-direction: column
 
-            button:not(button[value="back"])
+            button:not(button[value = "back"])
                 height: 40px
                 border: none
                 cursor: pointer
@@ -56,14 +56,14 @@ main
                 font-family: Outfit-Bold, sans-serif
                 box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
 
-            button:not(button[value="back"]):disabled
+            button:not(button[value = "back"]):disabled
                 pointer-events: none
                 will-change: transform
                 color: rgb(255, 255, 255)
                 animation: jolt 1.5s linear
                 background: rgb(255, 102, 102)
 
-            button[value="back"]
+            button[value = "back"]
                 height: 40px
                 border: none
                 cursor: pointer
@@ -272,7 +272,7 @@ main
             display: flex
             align-items: stretch
 
-            button:not(button[value="wipe"])
+            button:not(button[value = "wipe"])
                 flex: 1
                 padding: 0
                 border: none
@@ -283,7 +283,7 @@ main
                 font-family: Outfit-Bold, sans-serif
                 box-shadow: 0 0 5px rgba(0, 0, 0, 0.5)
 
-            button[value="draw"]
+            button[value = "draw"]
                 span
                     margin: 0
                     display: none
@@ -291,7 +291,7 @@ main
                     text-align: center
                     font-family: Outfit-Bold, sans-serif
 
-            button[value="wipe"]
+            button[value = "wipe"]
                 padding: 0
                 border: none
                 font-size: 24px
@@ -323,10 +323,10 @@ main
                 font-family: Outfit-Bold, sans-serif
                 box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
 
-            button[value="wipe"]
+            button[value = "wipe"]
                 color: rgb(255, 255, 255)
                 background: rgb(255, 102, 102)
-            button[value="back"]
+            button[value = "back"]
                 background: rgb(255, 255, 255)
 
 @media (hover: hover) and (pointer: fine)
@@ -336,34 +336,34 @@ main
             background: rgb(15, 80, 55)
 
     .lobby#start:open
-        form button[value="start room"]:hover
+        form button[value = "start room"]:hover
             border-radius: 90px
             background: rgb(15, 80, 55)
 
     .lobby#enter:open
-        form button[value="enter room"]:hover
+        form button[value = "enter room"]:hover
             border-radius: 90px
             background: rgb(15, 80, 55)
 
     .lobby#start:open, .lobby#enter:open
-        form button[value="back"]:hover
+        form button[value = "back"]:hover
             border-radius: 90px
             background: rgb(204, 204, 204)
 
     #panel:open
-        button:not(button[value="wipe"]):hover
+        button:not(button[value = "wipe"]):hover
             border-radius: 90px
             background: rgb(204, 204, 204)
-        button[value="wipe"]:hover
+        button[value = "wipe"]:hover
             will-change: transform
             animation: tada 1.5s ease-in-out
 
     #allow:open
         button
             border-radius: 90px
-        button[value="wipe"]:hover
+        button[value = "wipe"]:hover
             background: rgb(204, 51, 51)
-        button[value="back"]:hover
+        button[value = "back"]:hover
             background: rgb(204, 204, 204)
 
 @keyframes load
