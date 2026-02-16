@@ -1,7 +1,7 @@
 import {gsap} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/+esm";
 import {Draggable} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/Draggable.min.js";
 
-const socket = new WebSocket("wss://api.playontable.com/websocket/");
+const socket = new WebSocket("ws://localhost:8000/websocket/");
 const {
     entry,
     start,
@@ -105,22 +105,22 @@ function getActions(selected) {
     const hands = selected?.classList?.contains("hands");
 
     return {
-        hand: !!selected && (decks || cards || chips || dices || board || chess || dames),
+        wipe: !!selected,
+        hand: !!selected,
         fall: !!selected && hands,
         draw: !!selected && decks,
         flip: !!selected && cards,
-        roll: !!selected && dices,
-        wipe: !!selected
+        roll: !!selected && dices
     };
 }
 
-function setActionsVisibility({hand = false, fall = false, draw = false, flip = false, roll = false, wipe = true} = {}) {
+function setActionsVisibility({wipe = true, hand = false, fall = false, draw = false, flip = false, roll = false} = {}) {
+    actions.wipe.hidden = !wipe;
     actions.hand.hidden = !hand;
     actions.fall.hidden = !fall;
     actions.draw.hidden = !draw;
     actions.flip.hidden = !flip;
     actions.roll.hidden = !roll;
-    actions.wipe.hidden = !wipe;
 }
 
 panel?.addEventListener("toggle", () => {
@@ -130,9 +130,13 @@ panel?.addEventListener("toggle", () => {
 
 panel?.addEventListener("close", () => {
     switch (panel.returnValue) {
+        case "wipe":
+            allow?.showModal();
+            break;
         case "hand":
             getSelectedChild()?.classList.toggle("hands");
             socket.send(JSON.stringify({hook: "hand", index: Array.from(table.children).indexOf(getSelectedChild())}));
+            break;
         case "fall":
             getSelectedChild()?.classList.toggle("hands");
             socket.send(JSON.stringify({hook: "fall", index: Array.from(table.children).indexOf(getSelectedChild())}));
@@ -143,9 +147,6 @@ panel?.addEventListener("close", () => {
             break;
         case "roll":
             socket?.send(JSON.stringify({hook: "roll", data: gsap.utils.shuffle([1, 2, 3, 4, 5, 6]), index: Array.from(table.children).indexOf(getSelectedChild())}));
-            break;
-        case "wipe":
-            allow?.showModal();
             break;
     }
 });
@@ -184,6 +185,7 @@ socket?.addEventListener("message", (({data: json}) => {
                     }, 3000);
                     break;
                 case "void":
+                    console.log("q");
                     room.textContent = "ONLY YOU !";
                     room.toggleAttribute("disabled");
                     setTimeout(() => {

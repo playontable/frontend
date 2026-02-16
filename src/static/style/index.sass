@@ -330,27 +330,24 @@ main
                 background: rgb(255, 255, 255)
 
 @media (hover: hover) and (pointer: fine)
+    button:hover
+        border-radius: 90px !important
+
     .lobby:open
         form
             button:not(button[value = "back"]):hover
-                border-radius: 90px
                 background: rgb(15, 80, 55)
-
             button[value = "back"]:hover
-                border-radius: 90px
                 background: rgb(204, 204, 204)
 
     #panel:open
         button:not(button[value = "wipe"]):hover
-            border-radius: 90px
             background: rgb(204, 204, 204)
         button[value = "wipe"]:hover
             will-change: transform
             animation: tada 1.5s ease-in-out
 
     #allow:open
-        button
-            border-radius: 90px
         button[value = "wipe"]:hover
             background: rgb(204, 51, 51)
         button[value = "back"]:hover
