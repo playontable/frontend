@@ -10,6 +10,7 @@ const {
     table,
     panel,
     allow,
+    room,
     code,
     send
 } = Object.fromEntries([
@@ -20,6 +21,7 @@ const {
     "table",
     "panel",
     "allow",
+    "room",
     "code",
     "send"
 ].map(id => [id, document.getElementById(id)]));
@@ -185,7 +187,7 @@ socket?.addEventListener("message", (({data: json}) => {
                     }, 3000);
                     break;
                 case "void":
-                    console.log("q");
+                    start.show();
                     room.textContent = "ONLY YOU !";
                     room.toggleAttribute("disabled");
                     setTimeout(() => {

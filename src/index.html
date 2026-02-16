@@ -18,7 +18,7 @@
     <meta name = "description" content = "Let's play any game on a virtual realtime multiplayer table with PlayOnTable.com">
     <script>if ("serviceWorker" in navigator) window.addEventListener("load", () => {navigator.serviceWorker.register("sw.js");});</script>
 </head>
-    <body oncontextmenu = "return false" class = "shade">
+    <body oncontextmenu = "return false">
         <main>
             <dialog id = "entry" class = "lobby" open>
                 <form method = "dialog">
@@ -30,14 +30,14 @@
             <dialog id = "start" class = "lobby">
                 <form method = "dialog">
                     <div><h3 id = "code"></h3><h2 id = "send">↗️</h2></div>
-                    <button value = "start room">START ROOM</button>
+                    <button id = "room" value = "start room">START ROOM</button>
                     <button value = "back">BACK</button>
                 </form>
             </dialog>
             <dialog id = "enter" class = "lobby">
                 <form method = "dialog">
-                    <input id = "join" type = "text" placeholder = "Write Room Code..." pattern = "^[a-z0-9]{5}$" required>
-                    <button value = "enter room">ENTER ROOM</button>
+                    <input type = "text" placeholder = "Write Room Code..." pattern = "^[a-z0-9]{5}$" required>
+                    <button id = "join" value = "enter room">ENTER ROOM</button>
                     <button value = "back" formnovalidate>BACK</button>
                 </form>
             </dialog>
