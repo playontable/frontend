@@ -62,11 +62,27 @@ entry?.addEventListener("close", () => {
 });
 
 start?.addEventListener("close", () => {
-    socket?.send(JSON.stringify({hook: "play"}));
+    switch (start.returnValue) {
+        case "start room":
+            socket?.send(JSON.stringify({hook: "play"}));
+            break;
+        case "back":
+            start.close();
+            entry.show();
+            break;
+    }
 });
 
 enter?.addEventListener("close", () => {
-    watch?.show();
+    switch (enter.returnValue) {
+        case "enter room":
+            watch?.show();
+            break;
+        case "back":
+            enter.close();
+            entry.show();
+            break;
+    }
 });
 
 const actions = {
