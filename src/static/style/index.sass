@@ -330,25 +330,15 @@ main
                 background: rgb(255, 255, 255)
 
 @media (hover: hover) and (pointer: fine)
-    .lobby#entry:open
-        form button:hover
-            border-radius: 90px
-            background: rgb(15, 80, 55)
+    .lobby:open
+        form
+            button:not(button[value = "back"]):hover
+                border-radius: 90px
+                background: rgb(15, 80, 55)
 
-    .lobby#start:open
-        form button[value = "start room"]:hover
-            border-radius: 90px
-            background: rgb(15, 80, 55)
-
-    .lobby#enter:open
-        form button[value = "enter room"]:hover
-            border-radius: 90px
-            background: rgb(15, 80, 55)
-
-    .lobby#start:open, .lobby#enter:open
-        form button[value = "back"]:hover
-            border-radius: 90px
-            background: rgb(204, 204, 204)
+            button[value = "back"]:hover
+                border-radius: 90px
+                background: rgb(204, 204, 204)
 
     #panel:open
         button:not(button[value = "wipe"]):hover
