@@ -78,6 +78,7 @@ start?.addEventListener("close", () => {
 enter?.addEventListener("close", () => {
     switch (enter.returnValue) {
         case "enter room":
+            socket?.send(JSON.stringify({hook: "join", data: join?.value.toUpperCase()}));
             watch?.show();
             break;
         case "back":
@@ -202,7 +203,7 @@ socket?.addEventListener("message", (({data: json}) => {
             break;
         case "play":
             if (watch.open) watch.close();
-            document.body.classList.remove("shade");
+            document.body.dataset.overlay = "off";
             break;
         case "join":
             break;
@@ -236,5 +237,3 @@ socket?.addEventListener("message", (({data: json}) => {
             break;
     }
 }));
-
-// join?.addEventListener("click", () => {socket?.send(JSON.stringify({hook: "join", data: room?.value.toUpperCase()}));});
