@@ -115,5 +115,12 @@
             </dialog>
         </main>
         <script src = "static/js/index.js" type = "module"></script>
+        <script>
+            window.addEventListener("message", (event) => {
+                if (event.data?.method === "ui/notifications/tool-result") {
+                    console.log("OKAY");
+                }
+            });
+        </script>
     </body>
 </html>
