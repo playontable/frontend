@@ -1,5 +1,8 @@
 import {gsap} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/+esm";
 import {Draggable} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/Draggable.min.js";
+import {webHaptics} from "https://cdn.jsdelivr.net/npm/web-haptics@0.0.6/+esm2";
+
+const haptics = new WebHaptics();
 
 const socket = new WebSocket("wss://api.playontable.com/websocket/");
 const {
@@ -31,7 +34,10 @@ const getSelectedChild = () => table.querySelector("#table > .selected");
 const config = {
     onPress() {this.applyBounds({top: 10 - table?.scrollTop, left: 10 - table?.scrollLeft});},
     onDragStart() {socket.send(JSON.stringify({hook: "step", index: Array.from(table.children).indexOf(this.target)}));},
-    onDrag() {socket.send(JSON.stringify({hook: "drag", data: {x: this.x, y: this.y, zIndex: parseInt(getComputedStyle(this.target).zIndex, 10)}, index: Array.from(table.children).indexOf(this.target)}));},
+    onDrag() {
+        haptics.trigger("nudge");
+        socket.send(JSON.stringify({hook: "drag", data: {x: this.x, y: this.y, zIndex: parseInt(getComputedStyle(this.target).zIndex, 10)}, index: Array.from(table.children).indexOf(this.target)}));
+    },
     onClick() {
         if (this.target.classList.contains("copy")) {
             this.target.classList.add("selected");
