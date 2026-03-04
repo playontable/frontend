@@ -1,6 +1,6 @@
-import {gsap} from "gsap";
-import {WebHaptics} from "web-haptics";
-import {Draggable} from "gsap/Draggable";
+import {gsap} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/+esm";
+import {WebHaptics} from "https://cdn.jsdelivr.net/npm/web-haptics@0.0.6/+esm";
+import {Draggable} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/Draggable.min.js";
 
 const haptics = new WebHaptics();
 

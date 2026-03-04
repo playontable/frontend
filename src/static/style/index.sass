@@ -12,9 +12,8 @@ html, body
 body
     background: rgb(0, 0, 0)
 
-    &::before
+    &::after
         inset: 0
-        z-index: 1
         content: ""
         position: fixed
         pointer-events: auto
@@ -36,7 +35,7 @@ main
     height: calc(100dvh - 20px)
 
     .lobby:open
-        z-index: 2
+        z-index: 1
         border: none
         padding: 10px
         border-radius: 5px
