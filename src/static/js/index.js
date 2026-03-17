@@ -245,5 +245,5 @@ socket?.addEventListener("message", (({data: json}) => {
     }
 }));
 
-const app = new App({name: "PlayOnTable"});
+const app = new App();
 await app.connect();
