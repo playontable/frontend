@@ -16,7 +16,8 @@ const {
     allow,
     room,
     code,
-    send
+    send,
+    join
 } = Object.fromEntries([
     "entry",
     "start",
@@ -27,7 +28,8 @@ const {
     "allow",
     "room",
     "code",
-    "send"
+    "send",
+    "join"
 ].map(id => [id, document.getElementById(id)]));
 
 const getSelectedChild = () => table.querySelector("#table > .selected");
