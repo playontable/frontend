@@ -1,6 +1,7 @@
 import {gsap} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/+esm";
 import {WebHaptics} from "https://cdn.jsdelivr.net/npm/web-haptics@0.0.6/+esm";
 import {Draggable} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/Draggable.min.js";
+import {App} from "https://cdn.jsdelivr.net/npm/@modelcontextprotocol/ext-apps@1.2.2/+esm";
 
 const haptics = new WebHaptics();
 
@@ -243,3 +244,6 @@ socket?.addEventListener("message", (({data: json}) => {
             break;
     }
 }));
+
+const app = new App();
+await app.connect();
