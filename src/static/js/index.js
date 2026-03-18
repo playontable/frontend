@@ -67,7 +67,7 @@ entry?.addEventListener("close", () => {
             break;
         case "start solo":
             socket?.send(JSON.stringify({hook: "make"}));
-            socket?.send(JSON.stringify({hook: "play"}));
+            socket?.send(JSON.stringify({hook: "play", mode: "solo"}));
             break;
     }
 });
@@ -75,7 +75,7 @@ entry?.addEventListener("close", () => {
 start?.addEventListener("close", () => {
     switch (start.returnValue) {
         case "start room":
-            socket?.send(JSON.stringify({hook: "play"}));
+            socket?.send(JSON.stringify({hook: "play", mode: "room"}));
             break;
         case "back":
             start.close();
