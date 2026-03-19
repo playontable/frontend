@@ -121,12 +121,12 @@ function getActions(selected) {
 }
 
 function setActionsVisibility({hand = false, fall = false, draw = false, flip = false, roll = false, wipe = true} = {}) {
-    actions?.hand.hidden = !hand;
-    actions?.fall.hidden = !fall;
-    actions?.draw.hidden = !draw;
-    actions?.flip.hidden = !flip;
-    actions?.roll.hidden = !roll;
-    actions?.wipe.hidden = !wipe;
+    actions.hand.hidden = !hand;
+    actions.fall.hidden = !fall;
+    actions.draw.hidden = !draw;
+    actions.flip.hidden = !flip;
+    actions.roll.hidden = !roll;
+    actions.wipe.hidden = !wipe;
 }
 
 panel?.addEventListener("toggle", () => {
