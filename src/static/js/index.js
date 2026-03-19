@@ -4,7 +4,7 @@ import {Draggable} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/Draggable.min.
 
 const haptics = new WebHaptics();
 
-const socket = new WebSocket("wss://api.playontable.com/websocket/");
+const socket = new WebSocket("ws://localhost:8000/websocket/");
 const {
     entry,
     start,
@@ -41,6 +41,7 @@ const config = {
     onClick() {
         if (this.target.classList.contains("copy")) {
             this.target.classList.add("selected");
+            panel?.show();
         }
     },
     onDragEnd() {
@@ -89,7 +90,7 @@ enter?.addEventListener("close", () => {
     }
 });
 
-const getSelectedChild = () => table.querySelector("#table > .selected");
+const getSelectedChild = () => document.querySelector("#table > .selected");
 
 const actions = {
     hand: panel?.querySelector("button[value = 'hand']"),
@@ -120,13 +121,15 @@ function getActions(selected) {
     };
 }
 
+const toggleAction = (action, show) => action?.classList.toggle("show", show);
+
 function setActionsVisibility({hand = false, fall = false, draw = false, flip = false, roll = false, wipe = true} = {}) {
-    actions.hand.hidden = !hand;
-    actions.fall.hidden = !fall;
-    actions.draw.hidden = !draw;
-    actions.flip.hidden = !flip;
-    actions.roll.hidden = !roll;
-    actions.wipe.hidden = !wipe;
+    toggleAction(actions.hand, hand);
+    toggleAction(actions.fall, fall);
+    toggleAction(actions.draw, draw);
+    toggleAction(actions.flip, flip);
+    toggleAction(actions.roll, roll);
+    toggleAction(actions.wipe, wipe);
 }
 
 panel?.addEventListener("toggle", () => {

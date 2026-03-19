@@ -36,16 +36,23 @@ main
     .lobby:open
         z-index: 1
         border: none
-        padding: 10px
         border-radius: 5px
-        top: calc(50dvh - 54.2px)
+        top: calc(50dvh - 87.5px)
+        padding: 10px 10px 15px 10px
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5)
 
         form
-            gap: 10px
+            gap: 15px
             width: 200px
             display: flex
             flex-direction: column
+
+            button
+                transition: all 0.1s ease
+                background: linear-gradient(to bottom, rgb(245, 245, 245), rgb(220, 220, 220))
+
+                &:active
+                    transform: translateY(2.5px)
 
             button:not(button[value = "back"])
                 height: 40px
@@ -56,7 +63,10 @@ main
                 color: rgb(255, 255, 255)
                 background: rgb(23, 123, 84)
                 font-family: Outfit-Bold, sans-serif
-                box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
+                box-shadow: 0 5px 0 rgb(15, 80, 55), 0 5px 10px rgba(0, 0, 0, 0.5)
+
+                &:active
+                    box-shadow: 0 2.5px 0 rgb(15, 80, 55), 0 2.5px 5px rgba(0, 0, 0, 0.5)
 
             button:not(button[value = "back"]):disabled
                 pointer-events: none
@@ -64,6 +74,7 @@ main
                 color: rgb(255, 255, 255)
                 animation: jolt 1.5s linear
                 background: rgb(255, 102, 102)
+                box-shadow: 0 5px 0 rgb(204, 51, 51), 0 5px 10px rgba(0, 0, 0, 0.5)
 
             button[value = "back"]
                 height: 40px
@@ -73,7 +84,10 @@ main
                 border-radius: 5px
                 background: rgb(255, 255, 255)
                 font-family: Outfit-Bold, sans-serif
-                box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
+                box-shadow: 0 5px 0 rgb(150, 150, 150), 0 5px 10px rgba(0, 0, 0, 0.5)
+
+                &:active
+                    box-shadow: 0 2.5px 0 rgb(150, 150, 150), 0 2.5px 5px rgba(0, 0, 0, 0.5)
 
     .lobby#start:open
         form
@@ -264,10 +278,10 @@ main
         margin: 10px
         border: none
         bottom: 20px
-        padding: 10px
+        padding: 0 0 5px 0
         border-radius: 5px
-        width: calc(100dvw - 80px)
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5)
+        width: calc(100dvw - 60px)
+        background: rgba(0, 0, 0, 0)
 
         form
             gap: 10px
@@ -280,11 +294,21 @@ main
                 padding: 0
                 border: none
                 height: 40px
+                display: none
                 cursor: pointer
                 border-radius: 5px
-                background: rgb(230, 230, 230)
+                transition: all 0.1s ease
+                background: rgb(255, 255, 255)
                 font-family: Outfit-Bold, sans-serif
-                box-shadow: 0 0 5px rgba(0, 0, 0, 0.5)
+                box-shadow: 0 5px 0 rgb(150, 150, 150), 0 5px 10px rgba(0, 0, 0, 0.5)
+                background: linear-gradient(to bottom, rgb(245, 245, 245), rgb(220, 220, 220))
+
+                &.show
+                    display: block
+
+                &:active
+                    transform: translateY(2.5px)
+                    box-shadow: 0 2.5px 0 rgb(150, 150, 150), 0 2.5px 5px rgba(0, 0, 0, 0.5)
 
             button[value = "draw"]
                 span
@@ -305,56 +329,57 @@ main
 
     #allow:open
         border: none
-        width: 250px
-        padding: 10px
-        user-select: none
+        margin-top: 0
+        margin-bottom: 0 
         border-radius: 5px
+        top: calc(50dvh - 60px)
+        padding: 10px 10px 15px 10px
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5)
 
+        &::backdrop
+            background: rgba(0, 0, 0, 0.5)
+
         form
-            gap: 10px
+            gap: 15px
+            width: 200px
             display: flex
-            align-items: stretch
             flex-direction: column
-            justify-content: space-between
 
             button
+                height: 40px
                 border: none
                 cursor: pointer
-                padding: 10.8px 0
+                padding: 10px 0
                 border-radius: 5px
+                transition: all 0.1s ease
                 font-family: Outfit-Bold, sans-serif
-                box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.5)
+
+                &:active
+                    transform: translateY(2.5px)
 
             button[value = "wipe"]
                 color: rgb(255, 255, 255)
                 background: rgb(255, 102, 102)
+                box-shadow: 0 5px 0 rgb(204, 51, 51), 0 5px 10px rgba(0, 0, 0, 0.5)
+
+                &:active
+                    box-shadow: 0 2.5px 0 rgb(204, 51, 51), 0 2.5px 5px rgba(0, 0, 0, 0.5)
+
             button[value = "back"]
                 background: rgb(255, 255, 255)
+                box-shadow: 0 5px 0 rgb(150, 150, 150), 0 5px 10px rgba(0, 0, 0, 0.5)
+
+                &:active
+                    box-shadow: 0 2.5px 0 rgb(150, 150, 150), 0 2.5px 5px rgba(0, 0, 0, 0.5)
 
 @media (hover: hover) and (pointer: fine)
     button:hover
         border-radius: 90px !important
 
-    .lobby:open
-        form
-            button:not(button[value = "back"]):hover
-                background: rgb(15, 80, 55)
-            button[value = "back"]:hover
-                background: rgb(204, 204, 204)
-
     #panel:open
-        button:not(button[value = "wipe"]):hover
-            background: rgb(204, 204, 204)
         button[value = "wipe"]:hover
             will-change: transform
             animation: tada 1.5s ease-in-out
-
-    #allow:open
-        button[value = "wipe"]:hover
-            background: rgb(204, 51, 51)
-        button[value = "back"]:hover
-            background: rgb(204, 204, 204)
 
 @keyframes load
     from
