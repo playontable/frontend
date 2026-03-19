@@ -36,7 +36,7 @@
             </dialog>
             <dialog id = "enter" class = "lobby">
                 <form method = "dialog">
-                    <input id = "join" type = "text" placeholder = "Write Room Code..." pattern = "^[a-z0-9]{5}$" required>
+                    <input id = "join" type = "text" placeholder = "Write Room Code..." pattern = "^[a-zA-Z0-9]{5}$" required>
                     <button value = "enter room">ENTER ROOM</button>
                     <button value = "back" formnovalidate>BACK</button>
                 </form>
@@ -115,12 +115,5 @@
             </dialog>
         </main>
         <script src = "static/js/index.js" type = "module"></script>
-        <script>
-            window.addEventListener("message", (event) => {
-                if (event.data?.method === "ui/notifications/tool-result") {
-                    console.log("OKAY");
-                }
-            });
-        </script>
     </body>
 </html>

@@ -1,7 +1,6 @@
 import {gsap} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/+esm";
 import {WebHaptics} from "https://cdn.jsdelivr.net/npm/web-haptics@0.0.6/+esm";
 import {Draggable} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/Draggable.min.js";
-import {App} from "https://cdn.jsdelivr.net/npm/@modelcontextprotocol/ext-apps@1.2.2/+esm";
 
 const haptics = new WebHaptics();
 
@@ -32,8 +31,6 @@ const {
     "join"
 ].map(id => [id, document.getElementById(id)]));
 
-const getSelectedChild = () => table.querySelector("#table > .selected");
-
 const config = {
     onPress() {this.applyBounds({top: 10 - table?.scrollTop, left: 10 - table?.scrollLeft});},
     onDragStart() {socket.send(JSON.stringify({hook: "step", index: Array.from(table.children).indexOf(this.target)}));},
@@ -59,15 +56,13 @@ send?.addEventListener("click", () => {navigator.share({text: code?.innerText});
 entry?.addEventListener("close", () => {
     switch (entry.returnValue) {
         case "start room":
-            start?.show();
-            socket?.send(JSON.stringify({hook: "make"}));
+            socket?.send(JSON.stringify({hook: "host", mode: "room"}));
             break;
         case "enter room":
             enter?.show();
             break;
         case "start solo":
-            socket?.send(JSON.stringify({hook: "make"}));
-            socket?.send(JSON.stringify({hook: "play", mode: "solo"}));
+            socket?.send(JSON.stringify({hook: "host", mode: "solo"}));
             break;
     }
 });
@@ -75,11 +70,10 @@ entry?.addEventListener("close", () => {
 start?.addEventListener("close", () => {
     switch (start.returnValue) {
         case "start room":
-            socket?.send(JSON.stringify({hook: "play", mode: "room"}));
+            socket?.send(JSON.stringify({hook: "play"}));
             break;
         case "back":
-            start.close();
-            entry.show();
+            entry?.show();
             break;
     }
 });
@@ -88,14 +82,14 @@ enter?.addEventListener("close", () => {
     switch (enter.returnValue) {
         case "enter room":
             socket?.send(JSON.stringify({hook: "join", data: join?.value.toUpperCase()}));
-            watch?.show();
             break;
         case "back":
-            enter.close();
-            entry.show();
+            entry?.show();
             break;
     }
 });
+
+const getSelectedChild = () => table.querySelector("#table > .selected");
 
 const actions = {
     hand: panel?.querySelector("button[value = 'hand']"),
@@ -126,13 +120,13 @@ function getActions(selected) {
     };
 }
 
-function setActionsVisibility({wipe = true, hand = false, fall = false, draw = false, flip = false, roll = false} = {}) {
-    actions.wipe.hidden = !wipe;
-    actions.hand.hidden = !hand;
-    actions.fall.hidden = !fall;
-    actions.draw.hidden = !draw;
-    actions.flip.hidden = !flip;
-    actions.roll.hidden = !roll;
+function setActionsVisibility({hand = false, fall = false, draw = false, flip = false, roll = false, wipe = true} = {}) {
+    actions?.hand.hidden = !hand;
+    actions?.fall.hidden = !fall;
+    actions?.draw.hidden = !draw;
+    actions?.flip.hidden = !flip;
+    actions?.roll.hidden = !roll;
+    actions?.wipe.hidden = !wipe;
 }
 
 panel?.addEventListener("toggle", () => {
@@ -142,9 +136,6 @@ panel?.addEventListener("toggle", () => {
 
 panel?.addEventListener("close", () => {
     switch (panel.returnValue) {
-        case "wipe":
-            allow?.showModal();
-            break;
         case "hand":
             getSelectedChild()?.classList.toggle("hands");
             socket.send(JSON.stringify({hook: "hand", index: Array.from(table.children).indexOf(getSelectedChild())}));
@@ -160,18 +151,14 @@ panel?.addEventListener("close", () => {
         case "roll":
             socket?.send(JSON.stringify({hook: "roll", data: gsap.utils.shuffle([1, 2, 3, 4, 5, 6]), index: Array.from(table.children).indexOf(getSelectedChild())}));
             break;
+        case "wipe":
+            allow?.showModal();
+            break;
     }
 });
 
 allow?.addEventListener("close", () => {
-    switch (allow.returnValue) {
-        case "wipe":
-            socket?.send(JSON.stringify({hook: "wipe", index: Array.from(table?.children).indexOf(getSelectedChild())}));
-            break;
-        case "back":
-            allow.close();
-            break;
-    }
+    if (allow.returnValue === "wipe") socket?.send(JSON.stringify({hook: "wipe", index: Array.from(table?.children).indexOf(getSelectedChild())}));
 });
 
 socket?.addEventListener("message", (({data: json}) => {
@@ -208,19 +195,21 @@ socket?.addEventListener("message", (({data: json}) => {
             }
             break;
         case "code":
+            start?.show();
             code.textContent = data;
+            break;
+        case "join":
+            watch?.show();
             break;
         case "play":
             if (watch.open) watch.close();
             document.body.dataset.overlay = "off";
             break;
-        case "join":
+        case "step":
+            child.classList.toggle("dragging");
             break;
         case "drag":
             gsap.set(child, data);
-            break;
-        case "step":
-            child.classList.toggle("dragging");
             break;
         case "copy":
             const clone = table.appendChild(child.cloneNode(true));
@@ -246,6 +235,3 @@ socket?.addEventListener("message", (({data: json}) => {
             break;
     }
 }));
-
-const app = new App();
-await app.connect();
