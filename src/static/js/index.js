@@ -81,7 +81,7 @@ start?.addEventListener("close", () => {
 enter?.addEventListener("close", () => {
     switch (enter.returnValue) {
         case "enter room":
-            socket?.send(JSON.stringify({hook: "join", data: join?.value.toUpperCase()}));
+            socket?.send(JSON.stringify({hook: "join", code: join?.value.toUpperCase()}));
             break;
         case "back":
             entry?.show();
@@ -149,7 +149,7 @@ panel?.addEventListener("close", () => {
         case "flip":
             break;
         case "roll":
-            socket?.send(JSON.stringify({hook: "roll", data: gsap.utils.shuffle([1, 2, 3, 4, 5, 6]), index: Array.from(table.children).indexOf(getSelectedChild())}));
+            socket?.send(JSON.stringify({hook: "roll", index: Array.from(table.children).indexOf(getSelectedChild())}));
             break;
         case "wipe":
             allow?.showModal();
@@ -196,7 +196,7 @@ socket?.addEventListener("message", (({data: json}) => {
             break;
         case "code":
             start?.show();
-            code.textContent = data;
+            code.textContent = code;
             break;
         case "join":
             watch?.show();
