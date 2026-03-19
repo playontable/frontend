@@ -4,7 +4,7 @@ import {Draggable} from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/Draggable.min.
 
 const haptics = new WebHaptics();
 
-const socket = new WebSocket("ws://localhost:8000/websocket/");
+const socket = new WebSocket("wss://api.playontable.com/websocket/");
 const {
     entry,
     start,
