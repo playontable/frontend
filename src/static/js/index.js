@@ -40,6 +40,8 @@ const config = {
     },
     onClick() {
         if (this.target.classList.contains("copy")) {
+            panel?.close();
+            document.querySelector("#table > .selected")?.classList.remove("selected");
             this.target.classList.add("selected");
             panel?.show();
         }
@@ -163,6 +165,8 @@ panel?.addEventListener("close", () => {
 allow?.addEventListener("close", () => {
     if (allow.returnValue === "wipe") socket?.send(JSON.stringify({hook: "wipe", index: Array.from(table?.children).indexOf(getSelectedChild())}));
 });
+
+table?.addEventListener("click", (event) => {if (event.target === event.currentTarget) {getSelectedChild().classList.remove("selected"); panel?.close();}});
 
 socket?.addEventListener("message", (({data: json}) => {
     const {hook, data, index} = JSON.parse(json);
