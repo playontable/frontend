@@ -171,7 +171,6 @@ table?.addEventListener("click", (event) => {if (event.target === event.currentT
 
 socket?.addEventListener("message", (({data: json}) => {
     const {hook, data} = JSON.parse(json);
-    const child = (index !== undefined && index !== null) ? table.children[index] : null;
     switch (hook) {
         case "fail":
             switch (data) {
@@ -204,7 +203,7 @@ socket?.addEventListener("message", (({data: json}) => {
             break;
         case "room":
             start?.show();
-            code.textContent = data;
+            code.textContent = data.code;
             break;
         case "join":
             watch?.show();
@@ -214,12 +213,13 @@ socket?.addEventListener("message", (({data: json}) => {
             document.body.dataset.overlay = "off";
             break;
         case "step":
-            child.classList.toggle("dragging");
+            table.children[data.item].classList.toggle("dragging");
             break;
         case "drag":
-            gsap.set(child, data);
+            gsap.set(table.children[data.item], data);
             break;
         case "copy":
+            child = table.children[data.item];
             const clone = table.appendChild(child.cloneNode(true));
             clone.classList.add("copy");
             Draggable.create(clone, config);
@@ -227,18 +227,19 @@ socket?.addEventListener("message", (({data: json}) => {
             break;
         case "hand":
         case "fall":
-            child.classList.toggle("hides");
+            table.children[data.item].classList.toggle("hides");
             break;
         case "draw":
             break;
         case "flip":
             break;
         case "roll":
-            gsap.set(child, {repeat: 7, ease: "none", repeatDelay: 0.250, onRepeat: function () {child.setAttribute("src", `static/assets/table/dices/${child.classList[0]}/${data[this.iteration() - 2]}.webp`);}});
+            child = table.children[data.item];
+            gsap.set(child, {repeat: 7, ease: "none", repeatDelay: 0.250, onRepeat: function () {child.setAttribute("src", `static/assets/table/dices/${child.classList[0]}/${data.dice[this.iteration() - 2]}.webp`);}});
             break;
         case "wipe":
             allow.close();
-            child.remove();
+            table.children[data.item].remove();
             panel.removeAttribute("class");
             break;
     }
