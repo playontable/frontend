@@ -33,10 +33,10 @@ const {
 
 const config = {
     onPress() {this.applyBounds({top: 10 - table?.scrollTop, left: 10 - table?.scrollLeft});},
-    onDragStart() {socket.send(JSON.stringify({hook: "step", index: Array.from(table.children).indexOf(this.target)}));},
+    onDragStart() {socket.send(JSON.stringify({hook: "step", data: {item: Array.from(table.children).indexOf(this.target)}}));},
     onDrag() {
         haptics.trigger([{duration: 10, intensity: 0.2}]);
-        socket.send(JSON.stringify({hook: "drag", data: {x: this.x, y: this.y, zIndex: parseInt(getComputedStyle(this.target).zIndex, 10)}, index: Array.from(table.children).indexOf(this.target)}));
+        socket.send(JSON.stringify({hook: "drag", data: {item: Array.from(table.children).indexOf(this.target), x: this.x, y: this.y, zIndex: parseInt(getComputedStyle(this.target).zIndex, 10)}}));
     },
     onClick() {
         if (this.target.classList.contains("copy")) {
@@ -47,8 +47,9 @@ const config = {
         }
     },
     onDragEnd() {
-        socket.send(JSON.stringify({hook: "step", index: Array.from(table.children).indexOf(this.target)}));
-        if (!this.target.classList.contains("copy")) socket.send(JSON.stringify({hook: "copy", data: {x: this.startX, y: this.startY}, index: Array.from(table.children).indexOf(this.target)}));}
+        socket.send(JSON.stringify({hook: "step", data: {item: Array.from(table.children).indexOf(this.target)}}));
+        if (!this.target.classList.contains("copy")) socket.send(JSON.stringify({hook: "copy", data: {item: Array.from(table.children).indexOf(this.target), x: this.x, y: this.y, zIndex: parseInt(getComputedStyle(this.target).zIndex, 10)}}));
+    }
 }
 
 gsap.registerPlugin(Draggable);
@@ -59,13 +60,13 @@ send?.addEventListener("click", () => {navigator.share({text: code?.innerText});
 entry?.addEventListener("close", () => {
     switch (entry.returnValue) {
         case "start room":
-            socket?.send(JSON.stringify({hook: "host", mode: "room"}));
+            socket?.send(JSON.stringify({hook: "host", data: {mode: "room"}}));
             break;
         case "enter room":
             enter?.show();
             break;
         case "start solo":
-            socket?.send(JSON.stringify({hook: "host", mode: "solo"}));
+            socket?.send(JSON.stringify({hook: "host", data: {mode: "solo"}}));
             break;
     }
 });
@@ -73,7 +74,7 @@ entry?.addEventListener("close", () => {
 start?.addEventListener("close", () => {
     switch (start.returnValue) {
         case "start room":
-            socket?.send(JSON.stringify({hook: "play"}));
+            socket?.send(JSON.stringify({hook: "play", data: {}}));
             break;
         case "back":
             entry?.show();
@@ -84,7 +85,7 @@ start?.addEventListener("close", () => {
 enter?.addEventListener("close", () => {
     switch (enter.returnValue) {
         case "enter room":
-            socket?.send(JSON.stringify({hook: "join", code: join?.value.toUpperCase()}));
+            socket?.send(JSON.stringify({hook: "join", data: {code: join?.value.toUpperCase()}}));
             break;
         case "back":
             entry?.show();
@@ -143,18 +144,18 @@ panel?.addEventListener("close", () => {
     switch (panel.returnValue) {
         case "hand":
             getSelectedChild()?.classList.toggle("hands");
-            socket.send(JSON.stringify({hook: "hand", index: Array.from(table.children).indexOf(getSelectedChild())}));
+            socket.send(JSON.stringify({hook: "hand", data: {item: Array.from(table.children).indexOf(getSelectedChild())}}));
             break;
         case "fall":
             getSelectedChild()?.classList.toggle("hands");
-            socket.send(JSON.stringify({hook: "fall", index: Array.from(table.children).indexOf(getSelectedChild())}));
+            socket.send(JSON.stringify({hook: "fall", data: {item: Array.from(table.children).indexOf(getSelectedChild())}}));
             break;
         case "draw":
             break;
         case "flip":
             break;
         case "roll":
-            socket?.send(JSON.stringify({hook: "roll", index: Array.from(table.children).indexOf(getSelectedChild())}));
+            socket.send(JSON.stringify({hook: "roll", data: {item: Array.from(table.children).indexOf(getSelectedChild())}}));
             break;
         case "wipe":
             allow?.showModal();
@@ -163,13 +164,13 @@ panel?.addEventListener("close", () => {
 });
 
 allow?.addEventListener("close", () => {
-    if (allow.returnValue === "wipe") socket?.send(JSON.stringify({hook: "wipe", index: Array.from(table?.children).indexOf(getSelectedChild())}));
+    if (allow.returnValue === "wipe") socket.send(JSON.stringify({hook: "wipe", data: {item: Array.from(table.children).indexOf(getSelectedChild())}}));
 });
 
 table?.addEventListener("click", (event) => {if (event.target === event.currentTarget) {getSelectedChild().classList.remove("selected"); panel?.close();}});
 
 socket?.addEventListener("message", (({data: json}) => {
-    const {hook, data, index} = JSON.parse(json);
+    const {hook, data} = JSON.parse(json);
     const child = (index !== undefined && index !== null) ? table.children[index] : null;
     switch (hook) {
         case "fail":
@@ -201,9 +202,9 @@ socket?.addEventListener("message", (({data: json}) => {
                     break;
             }
             break;
-        case "code":
+        case "room":
             start?.show();
-            code.textContent = code;
+            code.textContent = data;
             break;
         case "join":
             watch?.show();
