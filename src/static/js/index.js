@@ -30,13 +30,26 @@ const {
     "send",
     "join"
 ].map(id => [id, document.getElementById(id)]));
+const joinRoom = enter?.querySelector("button[value = 'enter room']");
+const getSelectedChild = () => document.querySelector("#table > .selected");
+const getItem = (child) => Array.from(table.children).indexOf(child);
+const getDots = (child, drag) => ({item: getItem(child), x: drag.x, y: drag.y, zIndex: parseInt(getComputedStyle(child).zIndex, 10) || 0});
+const getDeckData = (child) => ({
+    item: getItem(child),
+    deck: child.classList.contains("ita") ? "ita" : "fra",
+    color: child.classList.contains("blue") ? "blue" : child.classList.contains("red") ? "red" : null,
+    jolly: child.classList.contains("jolly")
+});
+const getBack = (data) => data.deck === "ita" ? "static/assets/table/decks/back/ita.webp" : `static/assets/table/decks/back/fra/${data.color}.webp`;
+const getFace = (child, face) => child.setAttribute("src", face === "front" ? child.dataset.front : child.dataset.back);
+const getItemChild = (item) => table.children[item];
 
 const config = {
     onPress() {this.applyBounds({top: 10 - table?.scrollTop, left: 10 - table?.scrollLeft});},
-    onDragStart() {socket.send(JSON.stringify({hook: "step", data: {item: Array.from(table.children).indexOf(this.target)}}));},
+    onDragStart() {socket.send(JSON.stringify({hook: "step", data: {item: getItem(this.target)}}));},
     onDrag() {
         haptics.trigger([{duration: 10, intensity: 0.2}]);
-        socket.send(JSON.stringify({hook: "drag", data: {item: Array.from(table.children).indexOf(this.target), x: this.x, y: this.y, zIndex: parseInt(getComputedStyle(this.target).zIndex, 10)}}));
+        socket.send(JSON.stringify({hook: "drag", data: getDots(this.target, this)}));
     },
     onClick() {
         if (this.target.classList.contains("copy")) {
@@ -47,8 +60,8 @@ const config = {
         }
     },
     onDragEnd() {
-        socket.send(JSON.stringify({hook: "step", data: {item: Array.from(table.children).indexOf(this.target)}}));
-        if (!this.target.classList.contains("copy")) socket.send(JSON.stringify({hook: "copy", data: {item: Array.from(table.children).indexOf(this.target), x: this.x, y: this.y, zIndex: parseInt(getComputedStyle(this.target).zIndex, 10)}}));
+        socket.send(JSON.stringify({hook: "step", data: {item: getItem(this.target)}}));
+        if (!this.target.classList.contains("copy")) socket.send(JSON.stringify({hook: "copy", data: getDots(this.target, this)}));
     }
 }
 
@@ -93,8 +106,6 @@ enter?.addEventListener("close", () => {
     }
 });
 
-const getSelectedChild = () => document.querySelector("#table > .selected");
-
 const actions = {
     hand: panel?.querySelector("button[value = 'hand']"),
     fall: panel?.querySelector("button[value = 'fall']"),
@@ -107,11 +118,7 @@ const actions = {
 function getActions(selected) {
     const decks = selected?.classList?.contains("decks");
     const cards = selected?.classList?.contains("cards");
-    const chips = selected?.classList?.contains("chips");
     const dices = selected?.classList?.contains("dices");
-    const board = selected?.classList?.contains("board");
-    const chess = selected?.classList?.contains("chess");
-    const dames = selected?.classList?.contains("dames");
     const hands = selected?.classList?.contains("hands");
 
     return {
@@ -141,67 +148,76 @@ panel?.addEventListener("toggle", () => {
 });
 
 panel?.addEventListener("close", () => {
+    const selected = getSelectedChild();
     switch (panel.returnValue) {
         case "hand":
-            getSelectedChild()?.classList.toggle("hands");
-            socket.send(JSON.stringify({hook: "hand", data: {item: Array.from(table.children).indexOf(getSelectedChild())}}));
+            if (selected) {
+                selected.classList.toggle("hands");
+                socket.send(JSON.stringify({hook: "hand", data: {item: getItem(selected)}}));
+            }
             break;
         case "fall":
-            getSelectedChild()?.classList.toggle("hands");
-            socket.send(JSON.stringify({hook: "fall", data: {item: Array.from(table.children).indexOf(getSelectedChild())}}));
+            if (selected) {
+                selected.classList.toggle("hands");
+                socket.send(JSON.stringify({hook: "fall", data: {item: getItem(selected)}}));
+            }
             break;
         case "draw":
+            if (selected?.classList.contains("decks")) socket.send(JSON.stringify({hook: "draw", data: getDeckData(selected)}));
             break;
         case "flip":
+            if (selected?.classList.contains("cards")) socket.send(JSON.stringify({hook: "flip", data: {item: getItem(selected)}}));
             break;
         case "roll":
-            socket.send(JSON.stringify({hook: "roll", data: {item: Array.from(table.children).indexOf(getSelectedChild())}}));
+            if (selected) socket.send(JSON.stringify({hook: "roll", data: {item: getItem(selected)}}));
             break;
         case "wipe":
-            allow?.showModal();
+            if (selected) allow?.showModal();
             break;
     }
 });
 
 allow?.addEventListener("close", () => {
-    if (allow.returnValue === "wipe") socket.send(JSON.stringify({hook: "wipe", data: {item: Array.from(table.children).indexOf(getSelectedChild())}}));
+    const selected = getSelectedChild();
+    if (allow.returnValue === "wipe" && selected) socket.send(JSON.stringify({hook: "wipe", data: {item: getItem(selected)}}));
 });
 
-table?.addEventListener("click", (event) => {if (event.target === event.currentTarget) {getSelectedChild().classList.remove("selected"); panel?.close();}});
+table?.addEventListener("click", (event) => {if (event.target === event.currentTarget) {getSelectedChild()?.classList.remove("selected"); panel?.close();}});
 
 socket?.addEventListener("message", (({data: json}) => {
     const {hook, data} = JSON.parse(json);
     switch (hook) {
         case "fail":
-            switch (data) {
+            switch (data?.fail ?? data) {
                 case "none":
-                    join.textContent = "ROOM IS NON-EXISTENT !";
-                    join.toggleAttribute("disabled");
+                    joinRoom?.setAttribute("disabled", "");
+                    if (joinRoom) joinRoom.textContent = "ROOM IS NON-EXISTENT !";
                     setTimeout(() => {
-                        join.textContent = "ENTER ROOM";
-                        join.toggleAttribute("disabled");
+                        joinRoom?.removeAttribute("disabled");
+                        if (joinRoom) joinRoom.textContent = "ENTER ROOM";
                     }, 3000);
                     break;
                 case "play":
-                    join.textContent = "ROOM ALREADY STARTED !";
-                    join.toggleAttribute("disabled");
+                    joinRoom?.setAttribute("disabled", "");
+                    if (joinRoom) joinRoom.textContent = "ROOM ALREADY STARTED !";
                     setTimeout(() => {
-                        join.textContent = "ENTER ROOM";
-                        join.toggleAttribute("disabled");
+                        joinRoom?.removeAttribute("disabled");
+                        if (joinRoom) joinRoom.textContent = "ENTER ROOM";
                     }, 3000);
                     break;
                 case "void":
-                    start.show();
-                    room.textContent = "ONLY YOU !";
-                    room.toggleAttribute("disabled");
+                    start?.show();
+                    room?.setAttribute("disabled", "");
+                    if (room) room.textContent = "ONLY YOU !";
                     setTimeout(() => {
-                        room.textContent = "START ROOM";
-                        room.toggleAttribute("disabled");
+                        room?.removeAttribute("disabled");
+                        if (room) room.textContent = "START ROOM";
                     }, 3000);
                     break;
             }
             break;
         case "room":
+            if (watch?.open) watch.close();
             start?.show();
             code.textContent = data.code;
             break;
@@ -209,37 +225,66 @@ socket?.addEventListener("message", (({data: json}) => {
             watch?.show();
             break;
         case "play":
-            if (watch.open) watch.close();
+            if (watch?.open) watch.close();
             document.body.dataset.overlay = "off";
             break;
         case "step":
-            table.children[data.item].classList.toggle("dragging");
+            getItemChild(data.item)?.classList.toggle("dragging");
             break;
         case "drag":
-            gsap.set(table.children[data.item], data);
+            if (getItemChild(data.item)) gsap.set(getItemChild(data.item), data);
             break;
-        case "copy":
-            child = table.children[data.item];
+        case "copy": {
+            const child = getItemChild(data.item);
+            if (!child) break;
             const clone = table.appendChild(child.cloneNode(true));
             clone.classList.add("copy");
             Draggable.create(clone, config);
-            gsap.set(child, data);
+            gsap.set(clone, data);
+            gsap.set(child, {clearProps: "transform,zIndex"});
             break;
+        }
         case "hand":
         case "fall":
-            table.children[data.item].classList.toggle("hides");
+            getItemChild(data.item)?.classList.toggle("hides");
             break;
-        case "draw":
+        case "draw": {
+            const deck = getItemChild(data.item);
+            if (!deck) break;
+            const card = table.appendChild(document.createElement("img"));
+            const tableBox = table.getBoundingClientRect();
+            const deckBox = deck.getBoundingClientRect();
+            card.classList.add("cards", "copy", data.deck);
+            if (data.color) card.classList.add(data.color);
+            card.dataset.back = getBack(data);
+            card.dataset.front = `static/assets/table/decks/front/${data.deck}/${data.card}.webp`;
+            card.dataset.face = "back";
+            card.setAttribute("alt", `${data.deck} ${data.card}`);
+            getFace(card, card.dataset.face);
+            Draggable.create(card, config);
+            gsap.set(card, {x: deckBox.left - tableBox.left + table.scrollLeft + 20, y: deckBox.top - tableBox.top + table.scrollTop + 20, zIndex: 1});
             break;
-        case "flip":
+        }
+        case "flip": {
+            const card = getItemChild(data.item);
+            if (!card || !card.dataset.front || !card.dataset.back) break;
+            card.dataset.face = card.dataset.face === "front" ? "back" : "front";
+            getFace(card, card.dataset.face);
             break;
-        case "roll":
-            child = table.children[data.item];
-            gsap.set(child, {repeat: 7, ease: "none", repeatDelay: 0.250, onRepeat: function () {child.setAttribute("src", `static/assets/table/dices/${child.classList[0]}/${data.dice[this.iteration() - 2]}.webp`);}});
+        }
+        case "roll": {
+            const dice = getItemChild(data.item);
+            if (!dice) break;
+            data.dice.forEach((face, index) => {
+                setTimeout(() => {
+                    if (table.contains(dice)) dice.setAttribute("src", `static/assets/table/dices/${dice.classList[0]}/${face}.webp`);
+                }, 125 * index);
+            });
             break;
+        }
         case "wipe":
-            allow.close();
-            table.children[data.item].remove();
+            allow?.close();
+            getItemChild(data.item)?.remove();
             panel.removeAttribute("class");
             break;
     }
