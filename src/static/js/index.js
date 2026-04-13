@@ -31,6 +31,9 @@ const {
     "join"
 ].map(id => [id, document.getElementById(id)]));
 const joinRoom = enter?.querySelector("button[value = 'enter room']");
+const invite = start?.querySelector("form > div");
+const roomCode = {timer: null, delay: 2000};
+const wipeData = {child: null};
 const getSelectedChild = () => document.querySelector("#table > .selected");
 const getItem = (child) => Array.from(table.children).indexOf(child);
 const getDots = (child, drag) => ({item: getItem(child), x: drag.x, y: drag.y, zIndex: parseInt(getComputedStyle(child).zIndex, 10) || 0});
@@ -43,6 +46,18 @@ const getDeckData = (child) => ({
 const getBack = (data) => data.deck === "ita" ? "static/assets/table/decks/back/ita.webp" : `static/assets/table/decks/back/fra/${data.color}.webp`;
 const getFace = (child, face) => child.setAttribute("src", face === "front" ? child.dataset.front : child.dataset.back);
 const getItemChild = (item) => table.children[item];
+const loadRoomCode = (value) => {
+    clearTimeout(roomCode.timer);
+    invite?.setAttribute("data-state", "loading");
+    room?.removeAttribute("disabled");
+    if (room) room.textContent = "START ROOM";
+    if (code) code.textContent = value;
+    roomCode.timer = setTimeout(() => {invite?.setAttribute("data-state", "ready");}, roomCode.delay);
+};
+const keepRoomCode = () => {
+    clearTimeout(roomCode.timer);
+    if (code?.textContent) invite?.setAttribute("data-state", "ready");
+};
 
 const config = {
     onPress() {this.applyBounds({top: 10 - table?.scrollTop, left: 10 - table?.scrollLeft});},
@@ -149,6 +164,7 @@ panel?.addEventListener("toggle", () => {
 
 panel?.addEventListener("close", () => {
     const selected = getSelectedChild();
+    wipeData.child = null;
     switch (panel.returnValue) {
         case "hand":
             if (selected) {
@@ -172,14 +188,17 @@ panel?.addEventListener("close", () => {
             if (selected) socket.send(JSON.stringify({hook: "roll", data: {item: getItem(selected)}}));
             break;
         case "wipe":
-            if (selected) allow?.showModal();
+            if (selected) {
+                wipeData.child = selected;
+                allow?.showModal();
+            }
             break;
     }
 });
 
 allow?.addEventListener("close", () => {
-    const selected = getSelectedChild();
-    if (allow.returnValue === "wipe" && selected) socket.send(JSON.stringify({hook: "wipe", data: {item: getItem(selected)}}));
+    if (allow.returnValue === "wipe" && wipeData.child && table.contains(wipeData.child)) socket.send(JSON.stringify({hook: "wipe", data: {item: getItem(wipeData.child)}}));
+    wipeData.child = null;
 });
 
 table?.addEventListener("click", (event) => {if (event.target === event.currentTarget) {getSelectedChild()?.classList.remove("selected"); panel?.close();}});
@@ -206,6 +225,7 @@ socket?.addEventListener("message", (({data: json}) => {
                     }, 3000);
                     break;
                 case "void":
+                    keepRoomCode();
                     start?.show();
                     room?.setAttribute("disabled", "");
                     if (room) room.textContent = "ONLY YOU !";
@@ -219,7 +239,7 @@ socket?.addEventListener("message", (({data: json}) => {
         case "room":
             if (watch?.open) watch.close();
             start?.show();
-            code.textContent = data.code;
+            requestAnimationFrame(() => {loadRoomCode(data.code);});
             break;
         case "join":
             watch?.show();
@@ -283,7 +303,8 @@ socket?.addEventListener("message", (({data: json}) => {
             break;
         }
         case "wipe":
-            allow?.close();
+            wipeData.child = null;
+            if (allow?.open) allow.close();
             getItemChild(data.item)?.remove();
             panel.removeAttribute("class");
             break;

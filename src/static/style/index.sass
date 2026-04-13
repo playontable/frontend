@@ -130,14 +130,21 @@ main
                     position: absolute
                     transform: translateY(-50%)
 
-                &:has(#code:not(:empty))::before
+                &[data-state = "loading"]::before
                     opacity: 0
-                &:has(#code:not(:empty))
+                &[data-state = "loading"]
                     will-change: transform, filter
                     animation: zoom 0.2s ease-out 2s
 
-                &:has(#code:not(:empty)) #code, &:has(#code:not(:empty)) #send
+                &[data-state = "loading"] #code, &[data-state = "loading"] #send
                     animation: show 0.2s ease-out 2s both
+
+                &[data-state = "ready"]::before
+                    opacity: 0
+                    transition-delay: 0s
+
+                &[data-state = "ready"] #code, &[data-state = "ready"] #send
+                    visibility: visible
 
     .lobby#enter:open
         form
