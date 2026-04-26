@@ -46,8 +46,17 @@ const getDeckData = (child) => ({
 const getBack = (data) => data.deck === "ita" ? "static/assets/table/decks/back/ita.webp" : `static/assets/table/decks/back/fra/${data.color}.webp`;
 const getFace = (child, face) => child.setAttribute("src", face === "front" ? child.dataset.front : child.dataset.back);
 const getItemChild = (item) => table.children[item];
+const resetRoomCode = () => {
+    clearTimeout(roomCode.timer);
+    invite?.removeAttribute("data-state");
+    room?.removeAttribute("disabled");
+    if (room) room.textContent = "START ROOM";
+    if (code) code.textContent = "";
+};
 const loadRoomCode = (value) => {
     clearTimeout(roomCode.timer);
+    invite?.removeAttribute("data-state");
+    void invite?.offsetWidth;
     invite?.setAttribute("data-state", "loading");
     room?.removeAttribute("disabled");
     if (room) room.textContent = "START ROOM";
@@ -105,6 +114,7 @@ start?.addEventListener("close", () => {
             socket?.send(JSON.stringify({hook: "play", data: {}}));
             break;
         case "back":
+            resetRoomCode();
             entry?.show();
             break;
     }
