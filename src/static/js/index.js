@@ -36,7 +36,10 @@ const roomCode = {timer: null, delay: 2000};
 const wipeData = {child: null};
 const getSelectedChild = () => document.querySelector("#table > .selected");
 const getItem = (child) => Array.from(table.children).indexOf(child);
-const getDots = (child, drag) => ({item: getItem(child), x: drag.x, y: drag.y, zIndex: parseInt(getComputedStyle(child).zIndex, 10) || 0});
+const getZIndex = (child) => parseInt(getComputedStyle(child).zIndex, 10) || 0;
+const isAt = (child, x, y) => Math.abs((parseFloat(gsap.getProperty(child, "x")) || 0) - x) < 0.5 && Math.abs((parseFloat(gsap.getProperty(child, "y")) || 0) - y) < 0.5;
+const getDrawZIndex = (x, y) => Math.max(0, ...Array.from(table.children).filter(child => child.classList.contains("cards") && child.classList.contains("copy") && isAt(child, x, y)).map(getZIndex)) + 1;
+const getDots = (child, drag) => ({item: getItem(child), x: drag.x, y: drag.y, zIndex: getZIndex(child)});
 const getDeckData = (child) => ({
     item: getItem(child),
     deck: child.classList.contains("ita") ? "ita" : "fra",
@@ -157,6 +160,11 @@ function getActions(selected) {
 }
 
 const toggleAction = (action, show) => action?.classList.toggle("show", show);
+const toggleDrawInfo = (selected) => {
+    const fra = selected?.classList?.contains("fra");
+    actions.draw?.classList.toggle("with-jolly", !!fra && selected.classList.contains("jolly"));
+    actions.draw?.classList.toggle("without-jolly", !!fra && !selected.classList.contains("jolly"));
+};
 
 function setActionsVisibility({hand = false, fall = false, draw = false, flip = false, roll = false, wipe = true} = {}) {
     toggleAction(actions.hand, hand);
@@ -168,8 +176,10 @@ function setActionsVisibility({hand = false, fall = false, draw = false, flip = 
 }
 
 panel?.addEventListener("toggle", () => {
-    if (panel.open) setActionsVisibility(getActions(getSelectedChild()));
-    else getSelectedChild()?.classList?.remove("selected");
+    const selected = getSelectedChild();
+    toggleDrawInfo(panel.open ? selected : null);
+    if (panel.open) setActionsVisibility(getActions(selected));
+    else selected?.classList?.remove("selected");
 });
 
 panel?.addEventListener("close", () => {
@@ -281,9 +291,12 @@ socket?.addEventListener("message", (({data: json}) => {
         case "draw": {
             const deck = getItemChild(data.item);
             if (!deck) break;
-            const card = table.appendChild(document.createElement("img"));
             const tableBox = table.getBoundingClientRect();
             const deckBox = deck.getBoundingClientRect();
+            const x = deckBox.left - tableBox.left + table.scrollLeft + 20;
+            const y = deckBox.top - tableBox.top + table.scrollTop + 20;
+            const zIndex = getDrawZIndex(x, y);
+            const card = table.appendChild(document.createElement("img"));
             card.classList.add("cards", "copy", data.deck);
             if (data.color) card.classList.add(data.color);
             card.dataset.back = getBack(data);
@@ -292,7 +305,7 @@ socket?.addEventListener("message", (({data: json}) => {
             card.setAttribute("alt", `${data.deck} ${data.card}`);
             getFace(card, card.dataset.face);
             Draggable.create(card, config);
-            gsap.set(card, {x: deckBox.left - tableBox.left + table.scrollLeft + 20, y: deckBox.top - tableBox.top + table.scrollTop + 20, zIndex: 1});
+            gsap.fromTo(card, {x: x - 8, y: y - 16, scale: 0.85, rotation: -8, zIndex}, {x, y, scale: 1, rotation: 0, duration: 0.25, ease: "back.out(1.6)"});
             break;
         }
         case "flip": {

@@ -319,11 +319,15 @@ main
 
             button[value = "draw"]
                 span
-                    margin: 0
+                    margin: 0 0 0 4px
+                    width: 132px
                     display: none
                     font-size: 10px
                     text-align: center
                     font-family: Outfit-Bold, sans-serif
+
+                &.with-jolly span:first-child, &.without-jolly span:last-child
+                    display: inline-block
 
             button[value = "wipe"]
                 border: none
