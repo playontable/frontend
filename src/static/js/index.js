@@ -117,6 +117,7 @@ start?.addEventListener("close", () => {
             socket?.send(JSON.stringify({hook: "play", data: {}}));
             break;
         case "back":
+            socket?.send(JSON.stringify({hook: "exit", data: {}}));
             resetRoomCode();
             entry?.show();
             break;
@@ -263,6 +264,12 @@ socket?.addEventListener("message", (({data: json}) => {
             break;
         case "join":
             watch?.show();
+            break;
+        case "exit":
+            if (watch?.open) watch.close();
+            if (start?.open) start.close("exit");
+            resetRoomCode();
+            entry?.show();
             break;
         case "play":
             if (watch?.open) watch.close();
