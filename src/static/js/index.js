@@ -271,6 +271,7 @@ socket?.addEventListener("message", (({data: json}) => {
             if (watch?.open) watch.close();
             if (start?.open) start.close("exit");
             resetRoomCode();
+            resetJoinCode();
             entry?.show();
             break;
         case "play":
