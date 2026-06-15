@@ -155,7 +155,7 @@ function getActions(selected) {
 
     return {
         wipe: !!selected,
-        hand: !!selected,
+        hand: !!selected && !hands,
         fall: !!selected && hands,
         draw: !!selected && decks,
         flip: !!selected && cards,
