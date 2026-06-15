@@ -32,6 +32,7 @@ const {
 ].map(id => [id, document.getElementById(id)]));
 const joinRoom = enter?.querySelector("button[value = 'enter room']");
 const invite = start?.querySelector("form > div");
+const sendIcon = send?.querySelector("span");
 const roomCode = {timer: null, delay: 2000};
 const wipeData = {child: null};
 const getSelectedChild = () => document.querySelector("#table > .selected");
@@ -96,7 +97,7 @@ const config = {
 gsap.registerPlugin(Draggable);
 Draggable.create("#table > *", config);
 
-send?.addEventListener("click", () => {navigator.share({text: code?.innerText});});
+sendIcon?.addEventListener("click", () => {navigator.share({text: code?.innerText});});
 
 entry?.addEventListener("close", () => {
     switch (entry.returnValue) {

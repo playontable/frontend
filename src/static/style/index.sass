@@ -125,10 +125,14 @@ main
                     padding: 0
                     right: 3.5px
                     display: block
-                    cursor: pointer
+                    line-height: 1
                     visibility: hidden
                     position: absolute
                     transform: translateY(-50%)
+
+                    span
+                        cursor: pointer
+                        display: block
 
                 &[data-state = "loading"]::before
                     opacity: 0
