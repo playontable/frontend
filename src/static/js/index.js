@@ -82,7 +82,7 @@ const config = {
     },
     onClick() {
         if (this.target.classList.contains("copy")) {
-            panel?.close();
+            panel?.close("");
             document.querySelector("#table > .selected")?.classList.remove("selected");
             this.target.classList.add("selected");
             panel?.show();
@@ -188,17 +188,19 @@ panel?.addEventListener("toggle", () => {
 
 panel?.addEventListener("close", () => {
     const selected = getSelectedChild();
+    const action = panel.returnValue;
+    panel.returnValue = "";
     wipeData.child = null;
-    switch (panel.returnValue) {
+    switch (action) {
         case "hand":
-            if (selected) {
-                selected.classList.toggle("hands");
+            if (selected && !selected.classList.contains("hands")) {
+                selected.classList.add("hands");
                 socket.send(JSON.stringify({hook: "hand", data: {item: getItem(selected)}}));
             }
             break;
         case "fall":
-            if (selected) {
-                selected.classList.toggle("hands");
+            if (selected?.classList.contains("hands")) {
+                selected.classList.remove("hands");
                 socket.send(JSON.stringify({hook: "fall", data: {item: getItem(selected)}}));
             }
             break;
@@ -225,7 +227,7 @@ allow?.addEventListener("close", () => {
     wipeData.child = null;
 });
 
-table?.addEventListener("click", (event) => {if (event.target === event.currentTarget) {getSelectedChild()?.classList.remove("selected"); panel?.close();}});
+table?.addEventListener("click", (event) => {if (event.target === event.currentTarget) {getSelectedChild()?.classList.remove("selected"); panel?.close("");}});
 
 socket?.addEventListener("message", (({data: json}) => {
     const {hook, data} = JSON.parse(json);
@@ -296,8 +298,10 @@ socket?.addEventListener("message", (({data: json}) => {
             break;
         }
         case "hand":
+            getItemChild(data.item)?.classList.add("hides");
+            break;
         case "fall":
-            getItemChild(data.item)?.classList.toggle("hides");
+            getItemChild(data.item)?.classList.remove("hides");
             break;
         case "draw": {
             const deck = getItemChild(data.item);
