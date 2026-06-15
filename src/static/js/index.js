@@ -70,6 +70,7 @@ const keepRoomCode = () => {
     clearTimeout(roomCode.timer);
     if (code?.textContent) invite?.setAttribute("data-state", "ready");
 };
+const resetJoinCode = () => {if (join) join.value = "";};
 
 const config = {
     onPress() {this.applyBounds({top: 10 - table?.scrollTop, left: 10 - table?.scrollLeft});},
@@ -130,6 +131,7 @@ enter?.addEventListener("close", () => {
             socket?.send(JSON.stringify({hook: "join", data: {code: join?.value.toUpperCase()}}));
             break;
         case "back":
+            resetJoinCode();
             entry?.show();
             break;
     }
