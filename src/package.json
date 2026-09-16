@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "npm run build:js && npm run build:css && npm run build:html",
+    "build:js": "terser public/static/js/index.js --module --compress --mangle --output public/static/js/index.js",
+    "build:css": "sass public/static/style/index.sass public/static/style/index.css --style=compressed --no-source-map",
+    "build:html": "html-minifier-terser public/index.html --output public/index.html --minify-js true --remove-comments --minify-css true --collapse-whitespace"
+  },
+  "devDependencies": {
+    "sass": "^1.x.x",
+    "terser": "^5.x.x",
+    "html-minifier-terser": "^7.2.0"
+  }
+}
