@@ -13,9 +13,9 @@
     "id": "https://playontable.com/",
     "prefer_related_applications": true,
     "iarc_rating_id": "2055efa8-bf65-4787-8cc2-10fb0e1640d1",
-    "display_override": ["standalone", "minimal-ui", "browser", "window-controls-overlay"],
     "description": "Let's play any game on a virtual realtime multiplayer table with PlayOnTable.com",
     "launch_handler": {"client_mode": ["auto", "focus-existing", "navigate-existing", "navigate-new"]},
+    "display_override": ["fullscreen", "standalone", "minimal-ui", "browser", "window-controls-overlay"],
     "related_applications": [{"platform": "play", "id": "com.playontable.app", "url": "https://play.google.com/store/apps/details?id=com.playontable.app"}],
     "shortcuts": [
         {
