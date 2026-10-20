@@ -1,3 +1,5 @@
+$fade-duration: 1s
+
 @font-face
     font-display: swap
     font-family: Outfit-Bold
@@ -197,7 +199,7 @@ main
             touch-action: none
             position: absolute
             visibility: visible
-            transition: opacity 1s linear, visibility 0s
+            transition: opacity $fade-duration linear, visibility 0s
 
         .dragging
             will-change: transform, filter
@@ -219,7 +221,14 @@ main
             visibility: hidden
             pointer-events: none
             will-change: opacity
-            transition: opacity 1s linear, visibility 0s linear 1s
+            transition: opacity $fade-duration linear, visibility 0s linear $fade-duration
+
+        .cards
+            border: 1px solid
+            border-radius: 1.5px
+
+            &.jolly
+                border-color: rgb(204, 204, 204)
 
         .decks
             top: 10px
@@ -239,11 +248,10 @@ main
                     top: 70px
 
                     .cards
-                        border: 1px solid rgb(204, 204, 204)
+                        border-color: rgb(204, 204, 204)
 
             .cards
-                border: 1px solid
-                border-radius: 1.5px
+                box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3), 2px 2px 0 rgba(0, 0, 0, 0.2)
 
                 &:nth-child(2)
                     transform: translateY(-1.5px)

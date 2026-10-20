@@ -31,11 +31,19 @@ const {
     "join"
 ].map(id => [id, document.getElementById(id)]));
 const joinRoom = enter?.querySelector("button[value = 'enter room']");
+const enterForm = enter?.querySelector("form");
 const invite = start?.querySelector("form > div");
 const sendIcon = send?.querySelector("span");
 const roomCode = {timer: null, delay: 2000};
 const wipeData = {child: null};
 const getSelectedChild = () => document.querySelector("#table > .selected");
+const isOverPanel = (event) => {
+    if (!panel?.open) return false;
+    const pointer = event?.changedTouches?.[0] ?? event;
+    if (!pointer || typeof pointer.clientX !== "number" || typeof pointer.clientY !== "number") return true;
+    const {left, right, top, bottom} = panel.getBoundingClientRect();
+    return pointer.clientX >= left && pointer.clientX <= right && pointer.clientY >= top && pointer.clientY <= bottom;
+};
 const getItem = (child) => Array.from(table.children).indexOf(child);
 const getZIndex = (child) => parseInt(getComputedStyle(child).zIndex, 10) || 0;
 const isAt = (child, x, y) => Math.abs((parseFloat(gsap.getProperty(child, "x")) || 0) - x) < 0.5 && Math.abs((parseFloat(gsap.getProperty(child, "y")) || 0) - y) < 0.5;
@@ -80,7 +88,8 @@ const config = {
         haptics.trigger([{duration: 10, intensity: 0.2}]);
         socket.send(JSON.stringify({hook: "drag", data: getDots(this.target, this)}));
     },
-    onClick() {
+    onClick(event) {
+        if (isOverPanel(event)) return;
         if (this.target.classList.contains("copy")) {
             panel?.close("");
             document.querySelector("#table > .selected")?.classList.remove("selected");
@@ -127,15 +136,16 @@ start?.addEventListener("close", () => {
 });
 
 enter?.addEventListener("close", () => {
-    switch (enter.returnValue) {
-        case "enter room":
-            socket?.send(JSON.stringify({hook: "join", data: {code: join?.value.toUpperCase()}}));
-            break;
-        case "back":
-            resetJoinCode();
-            entry?.show();
-            break;
+    if (enter.returnValue === "back") {
+        resetJoinCode();
+        entry?.show();
     }
+});
+
+enterForm?.addEventListener("submit", (event) => {
+    if (event.submitter?.value !== "enter room") return;
+    event.preventDefault();
+    socket?.send(JSON.stringify({hook: "join", data: {code: join?.value.toUpperCase()}}));
 });
 
 const actions = {
@@ -268,6 +278,7 @@ socket?.addEventListener("message", (({data: json}) => {
             requestAnimationFrame(() => {loadRoomCode(data.code);});
             break;
         case "join":
+            if (enter?.open) enter.close("joined");
             watch?.show();
             break;
         case "exit":
@@ -314,6 +325,7 @@ socket?.addEventListener("message", (({data: json}) => {
             const card = table.appendChild(document.createElement("img"));
             card.classList.add("cards", "copy", data.deck);
             if (data.color) card.classList.add(data.color);
+            if (data.jolly) card.classList.add("jolly");
             card.dataset.back = getBack(data);
             card.dataset.front = `static/assets/table/decks/front/${data.deck}/${data.card}.webp`;
             card.dataset.face = "back";
