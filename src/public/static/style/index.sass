@@ -85,6 +85,12 @@ main
             #room:disabled
                 animation: none
 
+            #room:disabled:not([data-state = "waiting-for-players"])
+                will-change: auto
+                color: rgb(255, 255, 255)
+                background: rgb(23, 123, 84)
+                box-shadow: 0 5px 0 rgb(15, 80, 55), 0 5px 10px rgba(0, 0, 0, 0.5)
+
             button[value = "back"]
                 height: 40px
                 border: none
