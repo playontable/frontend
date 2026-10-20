@@ -300,7 +300,6 @@ main
                 left: 490px
 
     #panel:open
-        z-index: 2
         left: 20px
         margin: 10px
         border: none
@@ -309,6 +308,10 @@ main
         border-radius: 5px
         width: calc(100dvw - 60px)
         background: rgba(0, 0, 0, 0)
+
+        &::backdrop
+            background: transparent
+            pointer-events: none
 
         form
             gap: 10px
