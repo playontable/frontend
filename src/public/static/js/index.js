@@ -35,7 +35,7 @@ const enterForm = enter?.querySelector("form");
 const startForm = start?.querySelector("form");
 const invite = start?.querySelector("form > div");
 const sendIcon = send?.querySelector("span");
-const roomCode = {timer: null, delay: 2000};
+const roomCode = {timer: null, waitingTimer: null, delay: 2000};
 let playPending = false;
 const wipeData = {child: null};
 const dragClick = {suppress: false, timer: null};
@@ -63,26 +63,35 @@ const getFace = (child, face) => child.setAttribute("src", face === "front" ? ch
 const getItemChild = (item) => table.children[item];
 const resetRoomCode = () => {
     clearTimeout(roomCode.timer);
+    clearTimeout(roomCode.waitingTimer);
     invite?.removeAttribute("data-state");
-    room?.removeAttribute("disabled");
+    room?.setAttribute("disabled", "");
     room?.removeAttribute("data-state");
     if (room) room.textContent = "START ROOM";
     if (code) code.textContent = "";
 };
 const loadRoomCode = (value) => {
     clearTimeout(roomCode.timer);
+    clearTimeout(roomCode.waitingTimer);
     invite?.removeAttribute("data-state");
     room?.removeAttribute("data-state");
+    room?.setAttribute("disabled", "");
     void invite?.offsetWidth;
     invite?.setAttribute("data-state", "loading");
-    room?.removeAttribute("disabled");
     if (room) room.textContent = "START ROOM";
-    if (code) code.textContent = value;
-    roomCode.timer = setTimeout(() => {invite?.setAttribute("data-state", "ready");}, roomCode.delay);
+    if (code) code.textContent = value ?? "";
+    roomCode.timer = setTimeout(() => {
+        if (!code?.textContent) return;
+        invite?.setAttribute("data-state", "ready");
+        room?.removeAttribute("disabled");
+    }, roomCode.delay);
 };
 const keepRoomCode = () => {
     clearTimeout(roomCode.timer);
-    if (code?.textContent) invite?.setAttribute("data-state", "ready");
+    if (code?.textContent) {
+        invite?.setAttribute("data-state", "ready");
+        room?.removeAttribute("disabled");
+    }
 };
 const resetJoinCode = () => {if (join) join.value = "";};
 
@@ -151,7 +160,7 @@ entry?.addEventListener("close", () => {
 startForm?.addEventListener("submit", (event) => {
     if (event.submitter?.value !== "start room") return;
     event.preventDefault();
-    if (playPending) return;
+    if (playPending || room?.disabled || !code?.textContent || invite?.dataset.state !== "ready") return;
     playPending = true;
     socket?.send(JSON.stringify({hook: "play", data: {}}));
 });
@@ -297,7 +306,8 @@ socket?.addEventListener("message", (({data: json}) => {
                     room?.setAttribute("disabled", "");
                     room?.setAttribute("data-state", "waiting-for-players");
                     if (room) room.textContent = "ONLY YOU !";
-                    setTimeout(() => {
+                    clearTimeout(roomCode.waitingTimer);
+                    roomCode.waitingTimer = setTimeout(() => {
                         room?.removeAttribute("disabled");
                         room?.removeAttribute("data-state");
                         if (room) room.textContent = "START ROOM";
@@ -307,6 +317,8 @@ socket?.addEventListener("message", (({data: json}) => {
             break;
         case "room":
             if (watch?.open) watch.close();
+            clearTimeout(roomCode.waitingTimer);
+            room?.setAttribute("disabled", "");
             start?.show();
             requestAnimationFrame(() => {loadRoomCode(data.code);});
             break;
