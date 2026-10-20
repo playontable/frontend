@@ -36,6 +36,7 @@ const invite = start?.querySelector("form > div");
 const sendIcon = send?.querySelector("span");
 const roomCode = {timer: null, delay: 2000};
 const wipeData = {child: null};
+const dragClick = {suppress: false, timer: null};
 const getSelectedChild = () => document.querySelector("#table > .selected");
 const isOverPanel = (event) => {
     if (!panel?.open) return false;
@@ -62,12 +63,14 @@ const resetRoomCode = () => {
     clearTimeout(roomCode.timer);
     invite?.removeAttribute("data-state");
     room?.removeAttribute("disabled");
+    room?.removeAttribute("data-state");
     if (room) room.textContent = "START ROOM";
     if (code) code.textContent = "";
 };
 const loadRoomCode = (value) => {
     clearTimeout(roomCode.timer);
     invite?.removeAttribute("data-state");
+    room?.removeAttribute("data-state");
     void invite?.offsetWidth;
     invite?.setAttribute("data-state", "loading");
     room?.removeAttribute("disabled");
@@ -83,7 +86,10 @@ const resetJoinCode = () => {if (join) join.value = "";};
 
 const config = {
     onPress() {this.applyBounds({top: 10 - table?.scrollTop, left: 10 - table?.scrollLeft});},
-    onDragStart() {socket.send(JSON.stringify({hook: "step", data: {item: getItem(this.target)}}));},
+    onDragStart() {
+        panel?.setAttribute("data-dragging", "");
+        socket.send(JSON.stringify({hook: "step", data: {item: getItem(this.target)}}));
+    },
     onDrag() {
         haptics.trigger([{duration: 10, intensity: 0.2}]);
         socket.send(JSON.stringify({hook: "drag", data: getDots(this.target, this)}));
@@ -98,6 +104,10 @@ const config = {
         }
     },
     onDragEnd() {
+        panel?.removeAttribute("data-dragging");
+        dragClick.suppress = true;
+        clearTimeout(dragClick.timer);
+        dragClick.timer = setTimeout(() => {dragClick.suppress = false;}, 1000);
         socket.send(JSON.stringify({hook: "step", data: {item: getItem(this.target)}}));
         if (!this.target.classList.contains("copy")) socket.send(JSON.stringify({hook: "copy", data: getDots(this.target, this)}));
     }
@@ -105,6 +115,20 @@ const config = {
 
 gsap.registerPlugin(Draggable);
 Draggable.create("#table > *", config);
+
+document.addEventListener("click", (event) => {
+    if (!dragClick.suppress || event.detail === 0) return;
+    dragClick.suppress = false;
+    clearTimeout(dragClick.timer);
+    event.preventDefault();
+    event.stopImmediatePropagation();
+}, true);
+
+document.addEventListener("pointerdown", () => {
+    if (!dragClick.suppress) return;
+    dragClick.suppress = false;
+    clearTimeout(dragClick.timer);
+}, true);
 
 sendIcon?.addEventListener("click", () => {navigator.share({text: code?.innerText});});
 
@@ -264,9 +288,11 @@ socket?.addEventListener("message", (({data: json}) => {
                     keepRoomCode();
                     start?.show();
                     room?.setAttribute("disabled", "");
+                    room?.setAttribute("data-state", "waiting-for-players");
                     if (room) room.textContent = "ONLY YOU !";
                     setTimeout(() => {
                         room?.removeAttribute("disabled");
+                        room?.removeAttribute("data-state");
                         if (room) room.textContent = "START ROOM";
                     }, 3000);
                     break;

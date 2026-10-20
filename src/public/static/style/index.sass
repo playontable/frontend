@@ -78,6 +78,10 @@ main
                 background: rgb(255, 102, 102)
                 box-shadow: 0 5px 0 rgb(204, 51, 51), 0 5px 10px rgba(0, 0, 0, 0.5)
 
+            button[data-state = "waiting-for-players"]:disabled
+                will-change: auto
+                animation: none
+
             button[value = "back"]
                 height: 40px
                 border: none
@@ -366,6 +370,9 @@ main
                 border-radius: 5px
                 padding: 5px 0 0 0
                 filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.25))
+
+    #panel:open[data-dragging]
+        pointer-events: none
 
     #allow:open
         border: none
