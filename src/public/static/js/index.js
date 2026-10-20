@@ -32,9 +32,11 @@ const {
 ].map(id => [id, document.getElementById(id)]));
 const joinRoom = enter?.querySelector("button[value = 'enter room']");
 const enterForm = enter?.querySelector("form");
+const startForm = start?.querySelector("form");
 const invite = start?.querySelector("form > div");
 const sendIcon = send?.querySelector("span");
 const roomCode = {timer: null, delay: 2000};
+let playPending = false;
 const wipeData = {child: null};
 const dragClick = {suppress: false, timer: null};
 const getSelectedChild = () => document.querySelector("#table > .selected");
@@ -146,11 +148,16 @@ entry?.addEventListener("close", () => {
     }
 });
 
+startForm?.addEventListener("submit", (event) => {
+    if (event.submitter?.value !== "start room") return;
+    event.preventDefault();
+    if (playPending) return;
+    playPending = true;
+    socket?.send(JSON.stringify({hook: "play", data: {}}));
+});
+
 start?.addEventListener("close", () => {
     switch (start.returnValue) {
-        case "start room":
-            socket?.send(JSON.stringify({hook: "play", data: {}}));
-            break;
         case "back":
             socket?.send(JSON.stringify({hook: "exit", data: {}}));
             resetRoomCode();
@@ -285,8 +292,8 @@ socket?.addEventListener("message", (({data: json}) => {
                     }, 3000);
                     break;
                 case "void":
+                    playPending = false;
                     keepRoomCode();
-                    start?.show();
                     room?.setAttribute("disabled", "");
                     room?.setAttribute("data-state", "waiting-for-players");
                     if (room) room.textContent = "ONLY YOU !";
@@ -315,7 +322,9 @@ socket?.addEventListener("message", (({data: json}) => {
             entry?.show();
             break;
         case "play":
+            playPending = false;
             if (watch?.open) watch.close();
+            if (start?.open) start.close("play");
             document.body.dataset.overlay = "off";
             break;
         case "step":
