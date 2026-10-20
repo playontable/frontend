@@ -74,7 +74,6 @@ const keepRoomCode = () => {
 const resetJoinCode = () => {if (join) join.value = "";};
 
 const config = {
-    autoScroll: 1,
     onPress() {this.applyBounds({top: 10 - table?.scrollTop, left: 10 - table?.scrollLeft});},
     onDragStart() {socket.send(JSON.stringify({hook: "step", data: {item: getItem(this.target)}}));},
     onDrag() {
