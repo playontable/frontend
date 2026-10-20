@@ -186,6 +186,7 @@ main
         padding: 10px
         overflow: auto
         position: relative
+        isolation: isolate
         border-radius: 5px
         background: rgb(23, 123, 84)
         border: 10px ridge rgb(239, 158, 87)
@@ -300,6 +301,7 @@ main
                 left: 490px
 
     #panel:open
+        z-index: 2
         left: 20px
         margin: 10px
         border: none
@@ -308,10 +310,6 @@ main
         border-radius: 5px
         width: calc(100dvw - 60px)
         background: rgba(0, 0, 0, 0)
-
-        &::backdrop
-            background: transparent
-            pointer-events: none
 
         form
             gap: 10px

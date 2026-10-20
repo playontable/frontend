@@ -85,7 +85,7 @@ const config = {
             panel?.close("");
             document.querySelector("#table > .selected")?.classList.remove("selected");
             this.target.classList.add("selected");
-            panel?.showModal();
+            panel?.show();
         }
     },
     onDragEnd() {
